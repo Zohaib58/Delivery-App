@@ -11,23 +11,22 @@ Customer adds product to the shopping cart
 
 + Request (application/json)
 
-        {
-            "text": "Please Enter the following: ",
-            "fields": [
-                "Product ID": "PXXX-XXXXX",
-                "Deal ID": "DXXX-XXXXX",
-                "Quantity": 0001"
-            ]
+        { 
+            // userID  
+            // vendorID
+            "Product ID": "PXXX-XXXXX",
+            "Deal ID": "DXXX-XXXXX",
+            "Quantity": 0001"
+            
         }
 
 
 + Response 200 (application/json)
 
-        [
-            {
+        {
               "message":"Your order has been saved successfully."
-            }
-        ]
+        }
+
 
 
 ## View Profile [/viewProfile]
@@ -43,16 +42,15 @@ Customer adds product to the shopping cart
 
 + Response 200 (application/json)
 
-        [
-               {
-                "userId": "12345",
-                "firstName": "John",
-                "lastName": "Doe",
-                 "email": "johndoe@example.com",
-                 "phone": "+1234567890",
-                "address": "123 Main St, Anytown USA"
-}
-        ]
+       {
+            "userId": "12345",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "johndoe@example.com",
+            "phone": "+1234567890",
+            "address": "123 Main St, Anytown USA"
+       }
+       
 
 
 ## Update Profile [/updateProfile]
@@ -61,26 +59,34 @@ Customer adds product to the shopping cart
 
 + Request (application/json)
 
-{
-  "userId": "12345",
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "johndoe@example.com",
-  "phone": "+1234567890",
-  "address": "123 Main St, Anytown USA"
-}
+        {
+            /*
+            "userId": "12345",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "johndoe@example.com",
+            "phone": "+1234567890",
+            "address": "123 Main St, Anytown USA"
+            /*
+            "updatedField": "a1, b"
+            
+        }
 
 
 
 + Response 200 (application/json)
 
-        [
-{
-  "success": true,
-  "message": 'User $['userId] details updated successfully.'
-}
+        
+        {
+            "userId": "12345",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "johndoe@example.com",
+            "phone": "+1234567890",
+            "address": "123 Main St, Anytown USA"
+        }
 
-        ]
+        
 
 ## View Order [/viewOrder]
 
@@ -94,29 +100,29 @@ Customer adds product to the shopping cart
 
 
 + Response 200 (application/json)
-
-        [
-{
-  "orders": [
-    {
-      "orderId": "12345",
-      "customerName": "Customer Name A",
-      "deliveryAddress": "123 Main St, Anytown USA",
-      "deliveryPerson": "XYZ",
-      "items": [
+        
         {
-          "name": "Pizza",
-          "quantity": 2
-        },
-        {
-          "name": "Coke",
-          "quantity": 1
+            "orders": [
+                {
+                    "orderId": "12345",
+                    "customerName": "Customer Name A",
+                    "deliveryAddress": "123 Main St, Anytown USA",
+                    "deliveryPerson": "XYZ",
+                    "items": [
+                        {
+                            "name": "Pizza",
+                            "quantity": 2
+                        },
+                        {
+                            "name": "Coke",
+                            "quantity": 1
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    },
-   
-  ]
-}
+
+
 # Vendor Admin
 
 Deals by Vendors        
@@ -128,24 +134,24 @@ Deals by Vendors
 + Request (application/json)
 
         {
-            "fields":  [
-                "vendorId": "12345", // already filled,
-                "productId": , //dropdown choices
-                "dealName": "Special Offer",
-                "description": "Get 20% off on all orders over $50",
-                "startDate": "2023-03-01", // date field
-                "endDate": "2023-03-31" // date field
-            ]    
+                
+            "vendorId": "12345", // already filled,
+            "productId": [], //dropdown choices
+            "dealName": "Special Offer",
+            "description": "Get 20% off on all orders over $50",
+            "startDate": "2023-03-01", // date field
+            "endDate": "2023-03-31" // date field
+             
         }
 
 
 + Response 200 (application/json)
 
-        [
-            {
-              "message":"Your deal created successfully."
-            }
-        ]
+        
+        {
+            //"message":"Your deal created successfully."
+        }
+        
         
 
 ## Delete Deals [/deleteDeals]
@@ -163,12 +169,17 @@ Deals by Vendors
 
 + Response 200 (application/json)
 
-        [
-            {   
-              "Deal ID": "VXXXX",
-              "message":"Deal has been created successfully."
-            }
-        ]
+        
+        {   
+            "Deal ID": "VXXXX",
+            "vendorId": "12345", // already filled,
+            "productId": [] , //dropdown choices
+            "dealName": "Special Offer",
+            "description": "Get 20% off on all orders over $50",
+            "startDate": "2023-03-01", // date field
+            "endDate": "2023-03-31" // date field
+        }
+        
                
         
 # Super Admin
@@ -182,22 +193,21 @@ Super Admin creates the vendor
 + Request (application/json)
 
         {
-            "text": "Please Enter the following: ",
-            "fields": [
-                "Vendor ID": "VXXXX", //default
-                "Vendor Name": "Vendor Name",
-                "Description": "Lorem Ipsum"
-            ]
+            
+            "Vendor ID": "VXXXX", //default
+            "Vendor Name": "Vendor Name",
+            "Description": "Lorem Ipsum"
+            
         }
 
 
 + Response 200 (application/json)
 
-        [
-            {
-              "message":"Vendor has been created successfully."
-            }
-        ]
+        
+        {
+             //"message":"Vendor has been created successfully."
+        }
+        
         
         
 ## Delete Vendor [/deleteVendor]
@@ -215,12 +225,13 @@ Super Admin creates the vendor
 
 + Response 200 (application/json)
 
-        [
-            {   
-              "Vendor ID": "VXXXX",
-              "message":"Vendor has been created successfully."
-            }
-        ]
+        
+        {   
+            "Vendor ID": "VXXXX", 
+            "Vendor Name": "Vendor Name",
+            "Description": "Lorem Ipsum"
+        }
+        
         
         
 # Delivery Panel
@@ -234,48 +245,48 @@ Super Admin creates the vendor
 + Request (application/json)
 
         {
-          "deliveryId" : "DXXXX"
+            "deliveryId" : "DXXXX"
         }
 
 
 + Response 200 (application/json)
 
-        [
-{
-  "orders": [
-    {
-      "orderId": "12345",
-      "customerName": "Customer Name A",
-      "deliveryAddress": "123 Main St, Anytown USA",
-      "deliveryPerson": "XYZ",
-      "items": [
-        {
-          "name": "Pizza",
-          "quantity": 2
-        },
-        {
-          "name": "Coke",
-          "quantity": 1
-        }
-      ]
-    },
-    {
-      "orderId": "67890",
-      "customerName": "Customer Name B",
-      "deliveryAddress": "456 Elm St, Anytown USA",
-      "deliveryPerson": "XYZ",
-      "items": [
-        {
-          "name": "Burger",
-          "quantity": 1
-        },
-        {
-          "name": "Fries",
-          "quantity": 1
-        }
-      ]
-    }
-  ]
-}
-
+        [  
+            {    
+                "orders": [      
+                    {        
+                        "orderId": "12345",        
+                        "customerName": "Customer Name A",        
+                        "deliveryAddress": "123 Main St, Anytown USA",        
+                        "deliveryPerson": "XYZ",        
+                        "items": [          
+                            {            
+                                "name": "Pizza",            
+                                "quantity": 2          
+                            },          
+                            {
+                                "name": "Coke",            
+                                "quantity": 1          
+                            }        
+                        ]
+                    },
+                    
+                    {
+                        "orderId": "67890",
+                        "customerName": "Customer Name B",
+                        "deliveryAddress": "456 Elm St, Anytown USA",
+                        "deliveryPerson": "XYZ",
+                        "items": [
+                          {
+                            "name": "Burger",
+                            "quantity": 1
+                          },
+                          {
+                            "name": "Fries",
+                            "quantity": 1
+                          }
+                        ]
+                    }
+                ]
+            }
         ]
