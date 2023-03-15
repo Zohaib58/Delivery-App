@@ -1,20 +1,14 @@
 const jwt = require('jsonwebtoken')
 const Product = require('../models/productModel')
 const Customer = require('../models/customerModel')
+const ObjectId = require('mongodb').ObjectId;
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {
     try{
         const products = await Product.find()
 
-        const returnProducts = products.map(product => {
-            const {description, ...rest} = product;
-            return rest;
-        })
-        res.status({
-            success: true,
-            data: returnProducts
-        })
+        res.json(products)
     }catch(err){
         res.json({
             success: false,
@@ -26,7 +20,7 @@ const browseProducts = async(req, res) => {
 //customer views a specific product by clicking on it
 const getProduct = async(req, res) => {
     try{
-        const product = await Product.findById(req.body.ProductId)
+        const product = await Product.findById(req.body.productId)
         res.status(200).json({
             success: true,
             data: product
@@ -62,25 +56,27 @@ const searchProduct = async(req, res) => {
 const toggleFav = async(req, res)=>{
     try{
 
-        const userID = req.user.userID
+        //const userID = req.user.userID
 
-        const checkIfExist = await Customer.find({
-            $and:[
-                {customerId: userID},
-                { favourites: { $elemMatch: { $eq: req.body.productId } } }
-            ]
-        })
+        const customerId = "6412055e8bd6f6c6a679bebe"
+        const customer = await Customer.findById(customerId);
 
-        if (checkIfExist.length != 0){
-            Customer.updateOne(
-                { customerId: userID },
-                { $pull: { favourites: req.body.productId} }
-              );
-              res.json("Product removed from your favorites.");
+        const productExists = await customer.favourites.some(
+            (fav) => fav.productId.toString() === req.body.productId
+        );
+        
+        const favprod = new ObjectId(req.body.productId)
+        if (productExists) {
+            const a1 = await Customer.updateOne(
+                { _id: customerId },
+                { $pull: { favourites: { productId: favprod } } }
+            );
+            res.json("Product removed from your favorites.");
         } else {
-            const updatedFavList = await Customer.findByIdAndUpdate(userID, {
-                $push: { favourites: req.body.productId }
-              });
+            const a2 = await Customer.updateOne(
+                { _id: customerId },
+                { $push: { favourites: { productId: favprod } } }
+            );
             res.json("Product added to your favorites.");
         }
     } catch(err) {
@@ -93,11 +89,16 @@ const toggleFav = async(req, res)=>{
 
 const viewFav = async(req, res)=>{
     try{
-        const user = req.user
+        //const user = req.user
         
+        const customerId = "6412055e8bd6f6c6a679bebe"
+        const customer = await Customer.findById(customerId);
+
+        const productIds = customer.favourites.map(favourite => favourite.productId);
+
         const favProducts = await Product.find({
-            productID: {$in: user.favourites}
-        })
+            _id: { $in: productIds }
+        });
 
         if(favProducts.length>0){
             res.status(200).json({

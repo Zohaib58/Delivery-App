@@ -46,7 +46,6 @@ const addProduct = async(req, res) => {
         const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
 
         const newProduct = new Product({
-            vendorID : vendor,
             name : req.body.name,
             description : req.body.description,
             image : req.body.image,
@@ -54,10 +53,8 @@ const addProduct = async(req, res) => {
 
         try{
             const svProduct = await newProduct.save();
-            svProduct.productID = svProduct._id;
-            const savedProduct = await svProduct.save();
             const stock = new Inventory({
-                productId : savedProduct.productID,
+                productId : svProduct._id,
                 vendorId : vendor,
                 discount : req.body.discount,
                 quantity : req.body.quantity,
@@ -96,13 +93,20 @@ const deleteProduct = async(req, res) => {
 
         const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
 
-        const Stock = await Inventory.findById({prdocutId: req.body.productId})
-        if(Stock.vendorId == vendor){
-            const removeStock = await Inventory.findByIdAndDelete({prdocutId: req.body.productId})
-            const removeProduct = await Product.findByIdAndDelete(removeStock.productId)
-            res.json("Product Deleted!");
-        } else {
-            res.json("Unauthorized to perform this action.")
+        const Stock = await Inventory.findOne({productId: req.body.productId})
+
+        try{
+            const removeStock = await Inventory.deleteOne({productId: req.body.productId})
+            const removeProduct = await Product.deleteOne({productId: removeStock.productId})
+            res.json({
+                success: true,
+                error: "Product Deleted!"
+            })
+        } catch(err) {
+            res.json({
+                success: false,
+                error: err.message
+            })
         }
         
     } catch(err) {
@@ -153,7 +157,7 @@ const updateProduct = async(req, res) => {
         product.image = req.body.image;
         const savedProduct = await product.save();
 
-        const productStock = await Inventory.find({productId: product.productID})
+        const productStock = await Inventory.find({productId: product._id})
         if(productStock.length>0){
             const stock = productStock[0];
             stock.discount = req.body.discount;

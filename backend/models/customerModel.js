@@ -6,7 +6,7 @@ const customerSchema = mongoose.Schema
         //customerId will be ._id
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter Customer ID"],
+            required: true,
             unique: true,
             ref: "User"
         },
@@ -20,22 +20,22 @@ const customerSchema = mongoose.Schema
         },
         orders: [{
             type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter order details"],
             ref: "Order Detail"
         }],
         status: {
             type: Boolean,
-            required: [false, "Enter status"]
         },
         address: {
             type: String,
-            required: [false, "Enter address"]
         },
-        favourites: [{
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "select favorite products"],
-            ref: "Product"
-        }],
+        favourites: [
+            {
+                productId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Product"
+                }
+            }
+        ],
     },
     {
         timestamps: true,
