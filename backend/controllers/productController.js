@@ -56,10 +56,9 @@ const searchProduct = async(req, res) => {
 const toggleFav = async(req, res)=>{
     try{
 
-        //const userID = req.user.userID
+        const user = req.user
 
-        const customerId = "6412055e8bd6f6c6a679bebe"
-        const customer = await Customer.findById(customerId);
+        const customer = await Customer.findById(user._id);
 
         const productExists = await customer.favourites.some(
             (fav) => fav.productId.toString() === req.body.productId
@@ -89,10 +88,9 @@ const toggleFav = async(req, res)=>{
 
 const viewFav = async(req, res)=>{
     try{
-        //const user = req.user
-        
-        const customerId = "6412055e8bd6f6c6a679bebe"
-        const customer = await Customer.findById(customerId);
+        const user = req.user
+
+        const customer = await Customer.findById(user._id);
 
         const productIds = customer.favourites.map(favourite => favourite.productId);
 

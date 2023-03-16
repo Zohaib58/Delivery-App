@@ -12,7 +12,6 @@ const orderDetail = mongoose.Schema
             required: true,
             ref: 'User'
         },
-        
         details: {
             type: String,
             required: [true, "Enter description"],

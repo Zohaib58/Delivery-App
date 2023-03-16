@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 const customerSchema = mongoose.Schema
 (
     {
-        //customerId will be ._id
-        userId: {
+        customerId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             unique: true,

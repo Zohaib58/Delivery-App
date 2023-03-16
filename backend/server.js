@@ -1,6 +1,6 @@
 const express = require('express')
-const {errorHandler} = require('./backend/middleware/errorMiddleware')
-const connectDB = require('./backend/config/db')
+const {errorHandler} = require('./middleware/errorMiddleware')
+const connectDB = require('./config/db')
 
 
 const port = process.env.PORT || 5000
@@ -19,9 +19,9 @@ app.use('/api/users', require('./routes/userRoutes'))
 
 */
 
-app.use('/vapi/inventory', require('./backend/routes/inventoryRoutes'))
-app.use('/api/products', require('./backend/routes/productRoutes'))
-app.use('/api/orders', require('./backend/routes/orderRoutes'))
+app.use('/vapi/inventory', require('./routes/inventoryRoutes'))
+app.use('/api/products', require('./routes/productRoutes'))
+app.use('/api/orders', require('./routes/orderRoutes'))
 
 app.use(errorHandler)
 

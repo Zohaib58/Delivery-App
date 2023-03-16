@@ -6,7 +6,16 @@ const Vendor = require('../models/vendorModel')
 const createOrder = async(req, res)=>{
     try{
         const user = req.user
-        const order = req.body
+
+        const order = new Orders({
+            customerId : user._id,
+            products: req.body.products,
+            address: req.body.address,
+            contact: req.body.contact,
+            paymentType: req.body.paymentType,
+            status: req.body.status,
+            cost: req.body.cost
+        })
 
         const savedOrder = await order.save();
 
@@ -26,7 +35,7 @@ const viewOrders = async(req, res)=>{
     try{
         const user = req.user;
 
-        const orders = await Orders.find({customerId: user.userId})
+        const orders = await Orders.find({customerId: user._id})
 
         if(orders.length>0){
             res.status(200).json({
@@ -48,9 +57,10 @@ const viewOrders = async(req, res)=>{
 const viewOrder = async(req, res)=>{
     try{
         const user = req.user
+
         const order = await Orders.find({
             $and: [
-                {customerId: user.userId},
+                {customerId: user._id},
                 {orderId: req.body.orderId},
             ]
         })
@@ -62,8 +72,11 @@ const viewOrder = async(req, res)=>{
             })
         }
         else{
-            res.json("An error has occurred")
-        }
+            res.json({
+                success: false,
+                error: err.message
+            })
+        }   
     } catch(err) {
         res.json({
             success: false,

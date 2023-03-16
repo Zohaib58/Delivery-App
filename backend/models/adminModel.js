@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 const adminSchema = mongoose.Schema
 (
     {
-        //adminId will be ._id
-        userId: {
+        adminId: {
             type: String,
             required: [true, "Enter User ID"],
             ref: 'User'
