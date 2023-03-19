@@ -7,14 +7,21 @@ const Admin = require('../models/adminModel')
 //vendor views their product stock
 const viewInventory = async(req, res) => {
     try{
-        /*const userID = req.user.userID
+        const userID = req.user.userID
 
         const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId*/
+        const vendor = admin.vendorId
 
-        const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
-
-        const inventoryView = await Inventory.find({ vendorId: vendor }).populate('productId', 'name');
+        const inventoryView = await Inventory.find({
+            $and: [
+                { vendorId: vendor },
+            ]
+        })
+        .populate('productId', 'name')
+        .populate({
+            path: 'productId',
+            match: { status: 0 }
+        });
 
         const inventoryData = inventoryView.map(inventoryItem => {
         const { productId, discount, quantity, price } = inventoryItem;
@@ -38,15 +45,12 @@ const viewInventory = async(req, res) => {
 //vendor adds new product
 const addProduct = async(req, res) => {
     try{
-        /*const userID = req.user.userID
+        const userID = req.user.userID
 
         const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId*/
-
-        const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
+        const vendor = admin.vendorId
 
         const newProduct = new Product({
-            vendorID : vendor,
             name : req.body.name,
             description : req.body.description,
             image : req.body.image,
@@ -54,10 +58,8 @@ const addProduct = async(req, res) => {
 
         try{
             const svProduct = await newProduct.save();
-            svProduct.productID = svProduct._id;
-            const savedProduct = await svProduct.save();
             const stock = new Inventory({
-                productId : savedProduct.productID,
+                productId : svProduct._id,
                 vendorId : vendor,
                 discount : req.body.discount,
                 quantity : req.body.quantity,
@@ -89,21 +91,38 @@ const addProduct = async(req, res) => {
 //vendor deletes their product
 const deleteProduct = async(req, res) => {
     try{
-        /*const userID = req.user.userID
+        const userID = req.user.userID
 
         const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId*/
+        const vendor = admin.vendorId
 
-        const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
 
-        const Stock = await Inventory.findById({prdocutId: req.body.productId})
-        if(Stock.vendorId == vendor){
-            const removeStock = await Inventory.findByIdAndDelete({prdocutId: req.body.productId})
-            const removeProduct = await Product.findByIdAndDelete(removeStock.productId)
-            res.json("Product Deleted!");
-        } else {
-            res.json("Unauthorized to perform this action.")
+        const Stock = await Inventory.findOne({productId: req.body.productId})
+
+        if(Stock.vendorId === vendor) {
+            try{
+                const removeStock = await Inventory.findOne({productId: req.body.productId})
+                const removeProduct = await Product.findOne({productId: removeStock.productId})
+                removeProduct.status = 1;
+                const saveChanges = await removeProduct.save();
+                res.json({
+                    success: true,
+                    error: "Product Deleted!"
+                })
+            } catch(err) {
+                res.json({
+                    success: false,
+                    error: err.message
+                })
+            }
         }
+        else{
+            res.json({
+                success: false,
+                data: "Unauthorized to perform this action"
+            })
+        }
+        
         
     } catch(err) {
         res.json({
@@ -116,14 +135,7 @@ const deleteProduct = async(req, res) => {
 //vendor views a specific product
 const viewProduct = async(req, res) => {
     try {
-        /*const userID = req.user.userID
-
-        const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId*/
-
-        const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
-
-        const product = await Product.find({_id : req.body.productId} && {vendorID : vendor});
+        const product = await Product.find({_id : req.body.productId});
 
         res.status(200).json({
             succuss: true,
@@ -140,29 +152,41 @@ const viewProduct = async(req, res) => {
 //vendor updates product and its stock
 const updateProduct = async(req, res) => {
     try{
-        /*const userID = req.user.userID
+        const userID = req.user.userID
 
         const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId*/
-        const vendor = new ObjectId('6410a78a09a73ac03605b9e6')
+        const vendor = admin.vendorId
 
         const product = await Product.findById(req.body.productId)
+        const productStock = await Inventory.find({productId: product._id})
 
-        product.name = req.body.name;
-        product.description = req.body.description;
-        product.image = req.body.image;
-        const savedProduct = await product.save();
+        if(vendor === productStock.vendorId){
+            product.name = req.body.name;
+            product.description = req.body.description;
+            product.image = req.body.image;
+            const savedProduct = await product.save();
 
-        const productStock = await Inventory.find({productId: product.productID})
-        if(productStock.length>0){
-            const stock = productStock[0];
-            stock.discount = req.body.discount;
-            stock.price = req.body.price;
-            stock.quantity = req.body.quantity;
+            
+            if(productStock.length>0){
+                const stock = productStock[0];
+                stock.discount = req.body.discount;
+                stock.price = req.body.price;
+                stock.quantity = req.body.quantity;
 
-            const savedStock = await stock.save();
+                const savedStock = await stock.save();
+            }
+            res.json({
+                success: true,
+                data: "Product updated Successfully!"
+            });
         }
-        res.json("Product updated Successfully!");
+        else {
+            res.json({
+                success: false,
+                data: "Unauthorized to perform this action"
+            })
+        }
+        
     } catch(err) {
         res.json({
             success: false,

@@ -34,10 +34,7 @@ const customerSchema = mongoose.Schema
                 }
             }
         ],
-        paymentOption: {
-            type: PaymentEnum.schema, // Using the PaymentEnum schema as a type
-            required: true
-          }
+
     },
     {
         timestamps: true,
