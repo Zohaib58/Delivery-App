@@ -19,8 +19,9 @@ const vendorSchema = mongoose.Schema
             required: [true, "Enter your company's website URL"],
         },
         status: {
-            type: Number,
-            required: [true, "Enter Status"] //ASK ZOHAIB
+            type: mongoose.Schema.Types.ObjectId,
+            default: 0,
+            ref: 'Status'
         },
     },
     {

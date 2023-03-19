@@ -14,8 +14,9 @@ const userSchema = mongoose.Schema
             required: [true, "Enter your password"],
         },
         role: {
-            type: Number,
-            required: [true, "Enter your role"] //ASK ZOHAIB
+            type: mongoose.Schema.Types.Number,
+            required: [true, "Enter your role"],
+            ref: 'roleEnum',
         },
     },
     {

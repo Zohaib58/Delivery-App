@@ -17,12 +17,10 @@ const customerSchema = mongoose.Schema
             type: Number,
             required: [true, "Enter your contact"]
         },
-        orders: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Order Detail"
-        }],
         status: {
-            type: Boolean,
+            type: mongoose.Schema.Types.Number,
+            default: 0,
+            ref: 'Status',
         },
         address: {
             type: String,

@@ -9,6 +9,11 @@ const orderSchema = mongoose.Schema
             required: true,
             ref: 'Customer'
         },
+        vendorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Vendor'
+        },
         products: [
             {
                 ProductID: {
@@ -22,6 +27,14 @@ const orderSchema = mongoose.Schema
                 }
             }
         ],
+        deals: [
+            {
+                dealId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Product',
+                },
+            }
+        ],
         address: {
             type: String,
             required: [true, "Enter Address"]
@@ -31,12 +44,14 @@ const orderSchema = mongoose.Schema
             required: [true, "Enter contact"],
         },
         paymentType: {
-            type: Number,
-            required: [true, "Enter payment type"] //Enum?
+            type: mongoose.Schema.Types.Number,
+            default: 0,
+            ref: 'PaymentEnum'
         },
         status: {
-            type: Number,
-            required: [true, "Enter Status"] //Enum
+            type: mongoose.Schema.Types.Number,
+            default: 0,
+            ref: 'orderEnum'
         },
         date: {
             type: Date,

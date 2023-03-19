@@ -33,11 +33,6 @@ const deliveryPersonalSchema = mongoose.Schema
             required: [true, "Enter CNIC"],
             unique: true,
         },
-        orders: [{
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter order details"],
-            ref: "Order Detail"
-        }],
     },
     {
         timestamps: true,

@@ -15,6 +15,11 @@ const productSchema = mongoose.Schema
             type: String,
             required: [false, "Put URL"]
         },
+        status: {
+            type: mongoose.Schema.Types.Number,
+            default: 0,
+            ref: 'StatusEnum',
+        }
     },
     {
         timestamps: true,

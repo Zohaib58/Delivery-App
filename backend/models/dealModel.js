@@ -33,7 +33,7 @@ const dealSchema = mongoose.Schema
             type: Number,
             required: [true, "Enter price"]
         },
-        productId: [
+        products: [
             {
                 productId: {
                 type: mongoose.Schema.Types.ObjectId,

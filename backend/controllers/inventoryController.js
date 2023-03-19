@@ -12,7 +12,16 @@ const viewInventory = async(req, res) => {
         const admin = await Admin.findById(userID)
         const vendor = admin.vendorId
 
-        const inventoryView = await Inventory.find({ vendorId: vendor }).populate('productId', 'name');
+        const inventoryView = await Inventory.find({
+            $and: [
+                { vendorId: vendor },
+            ]
+        })
+        .populate('productId', 'name')
+        .populate({
+            path: 'productId',
+            match: { status: 0 }
+        });
 
         const inventoryData = inventoryView.map(inventoryItem => {
         const { productId, discount, quantity, price } = inventoryItem;
@@ -92,8 +101,10 @@ const deleteProduct = async(req, res) => {
 
         if(Stock.vendorId === vendor) {
             try{
-                const removeStock = await Inventory.deleteOne({productId: req.body.productId})
-                const removeProduct = await Product.deleteOne({productId: removeStock.productId})
+                const removeStock = await Inventory.findOne({productId: req.body.productId})
+                const removeProduct = await Product.findOne({productId: removeStock.productId})
+                removeProduct.status = 1;
+                const saveChanges = await removeProduct.save();
                 res.json({
                     success: true,
                     error: "Product Deleted!"

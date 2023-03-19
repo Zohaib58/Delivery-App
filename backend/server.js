@@ -12,16 +12,11 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-/* 
-For routes
-
-app.use('/api/users', require('./routes/userRoutes'))
-
-*/
 
 app.use('/vapi/inventory', require('./routes/inventoryRoutes'))
 app.use('/api/products', require('./routes/productRoutes'))
 app.use('/api/orders', require('./routes/orderRoutes'))
+app.use('/dp')
 
 app.use(errorHandler)
 
