@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
+const PaymentEnum = require('../enum/paymentEnum');
 
 const customerSchema = mongoose.Schema
 (
     {
-        //customerId will be ._id
-        userId: {
+        customerId: {
             type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter Customer ID"],
+            required: true,
             unique: true,
             ref: "User"
         },
@@ -18,24 +18,26 @@ const customerSchema = mongoose.Schema
             type: Number,
             required: [true, "Enter your contact"]
         },
-        orders: [{
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter order details"],
-            ref: "Order Detail"
-        }],
         status: {
-            type: Boolean,
-            required: [false, "Enter status"]
+            type: mongoose.Schema.Types.Number,
+            default: 0,
+            ref: 'Status',
         },
         address: {
             type: String,
-            required: [false, "Enter address"]
         },
-        favourites: [{
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "select favorite products"],
-            ref: "Product"
-        }],
+        favourites: [
+            {
+                productId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Product"
+                }
+            }
+        ],
+        paymentOption: {
+            type: PaymentEnum.schema, // Using the PaymentEnum schema as a type
+            required: true
+          }
     },
     {
         timestamps: true,

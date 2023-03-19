@@ -28,8 +28,9 @@ app.get('/api/goals', (req, res) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.use('/api/goals', require('./routes/goalRoutes'))
+app.use('/api/deals', require('./routes/dealRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/customer', require('./routes/customerRoutes'))
 
 app.use(errorHandler)
 

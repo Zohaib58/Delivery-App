@@ -33,11 +33,17 @@ const dealSchema = mongoose.Schema
             type: Number,
             required: [true, "Enter price"]
         },
-        productId: [
+        products: [
             {
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Select products"],
-            ref: 'Product' 
+                productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: [true, "Select products"],
+                ref: 'Product' 
+                },
+                quantity: {
+                    type: Number,
+                    default: 1,
+                }
             }
         ]
     },

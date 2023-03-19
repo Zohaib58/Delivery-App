@@ -3,7 +3,12 @@ const mongoose = require('mongoose')
 const deliveryPersonalSchema = mongoose.Schema
 (
     {
-        //dpId will be ._id
+        dpId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            unique: true,
+            ref: 'User'
+        },
         vendorId: {
             type: mongoose.Schema.Types.ObjectId,
             required: [true, "Enter Vendor ID"],
@@ -28,11 +33,6 @@ const deliveryPersonalSchema = mongoose.Schema
             required: [true, "Enter CNIC"],
             unique: true,
         },
-        orders: [{
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter order details"],
-            ref: "Order Detail"
-        }],
     },
     {
         timestamps: true,

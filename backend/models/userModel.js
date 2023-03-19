@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 const userSchema = mongoose.Schema
 (
     {
@@ -15,8 +14,9 @@ const userSchema = mongoose.Schema
             required: [true, "Enter your password"],
         },
         role: {
-            type: String,
-            required: [true, "Enter your role"] //ASK ZOHAIB
+            type: mongoose.Schema.Types.Number,
+            required: [true, "Enter your role"],
+            ref: 'Roles',
         },
     },
     {
