@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 const vendorSchema = mongoose.Schema
 (
     {
-        //vendorId will be ._id
-        userId: {
+        vendorId: {
             type: mongoose.Schema.Types.ObjectId,
             required: [true, "Enter Vendor ID"],
             unique: true,
@@ -12,15 +11,17 @@ const vendorSchema = mongoose.Schema
         },
         companyName: {
             type: String,
-            required: [true, "Enter company name"]
+            required: [true, "Enter company name"],
+            unique: true,
         },
         website: {
             type: String,
             required: [true, "Enter your company's website URL"],
         },
         status: {
-            type: Boolean,
-            required: [true, "Enter Status"] //ASK ZOHAIB
+            type: mongoose.Schema.Types.ObjectId,
+            default: 0,
+            ref: 'Status'
         },
     },
     {
