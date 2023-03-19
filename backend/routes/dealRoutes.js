@@ -1,15 +1,18 @@
 const express = require('express')
 const router = express.Router()
 const { 
-    registerUser,
-    loginUser,
+    createDeal,
+    editDeal,
+    deleteDeal,
     getMe,
- } = require('../controllers/userController')
+ } = require('../controllers/dealsController')
 
  const {protect} =  require('../middleware/authMiddleware')
 
-router.post('/', registerUser)
-router.post('/login', loginUser)
+router.post('/', createDeal)
+router.put('/edit/:id', editDeal)
+router.delete('/delete/:id', deleteDeal)
 router.get('/me', protect, getMe)
+
 
 module.exports = router
