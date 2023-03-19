@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/vapi/inventory', require('./routes/inventoryRoutes'))
 app.use('/api/products', require('./routes/productRoutes'))
 app.use('/api/orders', require('./routes/orderRoutes'))
-app.use('/dp')
+//app.use('/dp')
 
 
 const port = process.env.PORT || 5000
@@ -34,10 +34,6 @@ app.get('/api/goals', (req, res) => {
 
 
 */
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-
 app.use('/api/deals', require('./routes/dealRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/customer', require('./routes/customerRoutes'))
