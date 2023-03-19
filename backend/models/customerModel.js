@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const PaymentEnum = require('../enum/paymentEnum');
 
 const customerSchema = mongoose.Schema
 (
@@ -33,6 +34,7 @@ const customerSchema = mongoose.Schema
                 }
             }
         ],
+
     },
     {
         timestamps: true,

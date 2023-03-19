@@ -51,7 +51,9 @@ const orderSchema = mongoose.Schema
         status: {
             type: mongoose.Schema.Types.Number,
             default: 0,
+
             ref: 'orderEnum'
+
         },
         date: {
             type: Date,

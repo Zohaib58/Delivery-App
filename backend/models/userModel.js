@@ -16,7 +16,9 @@ const userSchema = mongoose.Schema
         role: {
             type: mongoose.Schema.Types.Number,
             required: [true, "Enter your role"],
+
             ref: 'roleEnum',
+
         },
     },
     {
