@@ -19,6 +19,10 @@ app.use('/api/products', require('./routes/productRoutes'))
 app.use('/api/orders', require('./routes/orderRoutes'))
 //app.use('/dp')
 
+/*app.get('/cors', (req, res) => {
+    res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
+    res.send({ "msg": "This has CORS enabled 🎈" })
+    })*/
 
 const port = process.env.PORT || 5000
 

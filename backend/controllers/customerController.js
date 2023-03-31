@@ -5,18 +5,12 @@ const Customer = require('../models/customerModel')
 
 
 const createCustomer = asyncHandler(async (req, res) => {
-    const {name, phoneNo, orders,  status, address, favourites} = req.body
-
-    if (!name || !phoneNo || !orders || !status || !address || !favourites) {
+    const { name ,phoneNo,  status, address, favourites} = req.body
+    
+    if (!name || !phoneNo || !address || !favourites) {
         res.status(400)
         throw new Error('Please add all fields')
     }
-    console.log(name)
-    console.log(phoneNo)
-    console.log(orders)
-    console.log(status)
-    console.log(address)
-    console.log(favourites)
 
     //const customerExists = await Customer.findOne({ userId })
 /*
@@ -25,29 +19,21 @@ const createCustomer = asyncHandler(async (req, res) => {
         throw new Error('Customer already exists')
     }
 */
-    console.log('helloUpper')
-    console.log(req.user.id)
-    console.log('hello')
     // Create Customer
     const customer = await Customer.create({
-        _id: req.user.id,
+        customerId: req.user.id,
         name, 
-        phoneNo, 
-        orders,  
+        phoneNo,   
         status, 
         address, 
         favourites,
     })
-
-    console.log('hello')
-    console.log(req.user.id)
     
     if (customer) {
         res.status(201).json({
             //_id: req.user.id,
             name: customer.name,
             phoneNo: customer.phoneNo,
-            orders: customer.orders,
             status: customer.status,
             address: customer.address,
             favourites: customer.favourites,
