@@ -55,25 +55,35 @@ const searchProduct = async(req, res) => {
 
 const toggleFav = async(req, res)=>{
     try{
-
         const user = req.user
-
-        const customer = await Customer.findById(user._id);
-
-        const productExists = await customer.favourites.some(
-            (fav) => fav.productId.toString() === req.body.productId
-        );
-        
+        const customer = await Customer.findOne({customerId: user._id});
         const favprod = new ObjectId(req.body.productId)
-        if (productExists) {
-            const a1 = await Customer.updateOne(
-                { _id: customerId },
-                { $pull: { favourites: { productId: favprod } } }
+
+        if(customer.favourites){
+            const productExists = await customer.favourites.some(
+                (fav) => fav.productId.toString() === req.body.productId
             );
-            res.json("Product removed from your favorites.");
-        } else {
+            
+            if (productExists) 
+            {
+                const a1 = await Customer.updateOne(
+                    { customerId: user._id },
+                    { $pull: { favourites: { productId: favprod } } }
+                );
+                res.json("Product removed from your favorites.");
+            } 
+            else 
+            {
+                const a2 = await Customer.updateOne(
+                    { customerId: user._id },
+                    { $push: { favourites: { productId: favprod } } }
+                );
+                res.json("Product added to your favorites.");
+            }
+        }
+        else{
             const a2 = await Customer.updateOne(
-                { _id: customerId },
+                { customerId: user._id },
                 { $push: { favourites: { productId: favprod } } }
             );
             res.json("Product added to your favorites.");
@@ -90,7 +100,7 @@ const viewFav = async(req, res)=>{
     try{
         const user = req.user
 
-        const customer = await Customer.findById(user._id);
+        const customer = await Customer.findOne({customerId: user._id});
 
         const productIds = customer.favourites.map(favourite => favourite.productId);
 
