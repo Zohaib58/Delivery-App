@@ -10,16 +10,16 @@ const {viewInventory,
     updateProduct} = require('../controllers/inventoryController')
 
 
-/*router.get('/', protect, viewInventory)
+router.get('/', protect, viewInventory)
 router.post('/addProducts', protect, addProduct)
 router.delete('/deleteProduct', protect, deleteProduct)
 router.get('/product',protect, viewProduct)
-router.patch('/product/editProduct', protect, updateProduct)*/
+router.patch('/product/editProduct', protect, updateProduct)
 
-router.get('/', viewInventory)
+/*router.get('/', viewInventory)
 router.post('/addProduct', addProduct)
 router.delete('/deleteProduct', deleteProduct)
 router.get('/product', viewProduct)
-router.patch('/product/editProduct', updateProduct)
+router.patch('/product/editProduct', updateProduct)*/
 
 module.exports = router

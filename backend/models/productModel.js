@@ -18,7 +18,9 @@ const productSchema = mongoose.Schema
         status: {
             type: mongoose.Schema.Types.Number,
             default: 0,
-            ref: 'Status',
+
+            ref: 'StatusEnum',
+
         }
     },
     {
