@@ -2,15 +2,16 @@ const jwt = require('jsonwebtoken')
 const ObjectId = require('mongodb').ObjectId;
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
-const Admin = require('../models/adminModel')
+const Category = require('../models/categoryModel')
+const Vendor = require('../models/vendorModel')
 
 //vendor views their product stock
 const viewInventory = async(req, res) => {
     try{
         const userID = req.user.userID
 
-        const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId
+        const vendorRec = await Vendor.findById(userID)
+        const vendor = vendorRec.vendorId
 
         const inventoryView = await Inventory.find({
             $and: [
@@ -47,37 +48,49 @@ const addProduct = async(req, res) => {
     try{
         const userID = req.user.userID
 
-        const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId
+        const vendorRec = await Vendor.findById(userID)
+        const vendor = vendorRec.vendorId
 
-        const newProduct = new Product({
-            name : req.body.name,
-            description : req.body.description,
-            image : req.body.image,
-        })
+        const categoryCheck = await Category.find({name: req.body.Category})
 
-        try{
-            const svProduct = await newProduct.save();
-            const stock = new Inventory({
-                productId : svProduct._id,
-                vendorId : vendor,
-                discount : req.body.discount,
-                quantity : req.body.quantity,
-                price : req.body.price,
+        if(categoryCheck.length==1){
+            const newProduct = new Product({
+                name : req.body.name,
+                vendorId: vendor,
+                description : req.body.description,
+                image : req.body.image,
+                category: categoryCheck[0].catNum
             })
+    
             try{
-                const savedStock = await stock.save();
-                res.json("Product added successfully");
+                const svProduct = await newProduct.save();
+                const stock = new Inventory({
+                    productId : svProduct._id,
+                    vendorId : vendor,
+                    discount : req.body.discount,
+                    quantity : req.body.quantity,
+                    price : req.body.price,
+                })
+                try{
+                    const savedStock = await stock.save();
+                    res.json("Product added successfully");
+                } catch(err) {
+                    res.json({
+                        success: false,
+                        error: err.message
+                    })
+                }
             } catch(err) {
                 res.json({
                     success: false,
                     error: err.message
                 })
             }
-        } catch(err) {
+        }
+        else{
             res.json({
                 success: false,
-                error: err.message
+                data: "The category does not exist yet. Kindly put in a request to admin if its need to be added"
             })
         }
     } catch(err) {
@@ -93,8 +106,8 @@ const deleteProduct = async(req, res) => {
     try{
         const userID = req.user.userID
 
-        const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId
+        const vendorRec = await Vendor.findById(userID)
+        const vendor = vendorRec.vendorId
 
 
         const Stock = await Inventory.findOne({productId: req.body.productId})
@@ -154,8 +167,8 @@ const updateProduct = async(req, res) => {
     try{
         const userID = req.user.userID
 
-        const admin = await Admin.findById(userID)
-        const vendor = admin.vendorId
+        const vendorRec = await Vendor.findById(userID)
+        const vendor = vendorRec.vendorId
 
         const product = await Product.findById(req.body.productId)
         const productStock = await Inventory.find({productId: product._id})
@@ -164,6 +177,7 @@ const updateProduct = async(req, res) => {
             product.name = req.body.name;
             product.description = req.body.description;
             product.image = req.body.image;
+            product.category = req.body.category
             const savedProduct = await product.save();
 
             

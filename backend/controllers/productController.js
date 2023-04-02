@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 //customer is displayed all the products
 const browseProducts = async(req, res) => {
     try{
-        const products = await Product.find()
+        const products = await Product.find({category: req.body.category})
 
         res.json(products)
     }catch(err){
