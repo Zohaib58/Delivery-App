@@ -11,7 +11,7 @@ const {viewInventory,
 
 
 router.get('/', protect, viewInventory)
-router.post('/addProducts', protect, addProduct)
+router.post('/addProduct', protect, addProduct)
 router.delete('/deleteProduct', protect, deleteProduct)
 router.get('/product',protect, viewProduct)
 router.patch('/product/editProduct', protect, updateProduct)

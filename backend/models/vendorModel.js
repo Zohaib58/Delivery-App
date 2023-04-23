@@ -3,12 +3,6 @@ const mongoose = require('mongoose')
 const vendorSchema = mongoose.Schema
 (
     {
-        vendorId: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, "Enter Vendor ID"],
-            unique: true,
-            ref : 'User',
-        },
         companyName: {
             type: String,
             required: [true, "Enter company name"],
@@ -19,7 +13,7 @@ const vendorSchema = mongoose.Schema
             required: [true, "Enter your company's website URL"],
         },
         status: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.Number,
             default: 0,
             ref: 'Status'
         },

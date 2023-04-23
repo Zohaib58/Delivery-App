@@ -12,14 +12,6 @@ const createCustomer = asyncHandler(async (req, res) => {
         throw new Error('Please add all fields')
     }
 
-    //const customerExists = await Customer.findOne({ userId })
-/*
-    if (customerExists) {
-        res.status(400)
-        throw new Error('Customer already exists')
-    }
-*/
-    // Create Customer
     const customer = await Customer.create({
         customerId: req.user.id,
         name, 
@@ -31,7 +23,6 @@ const createCustomer = asyncHandler(async (req, res) => {
     
     if (customer) {
         res.status(201).json({
-            //_id: req.user.id,
             name: customer.name,
             phoneNo: customer.phoneNo,
             status: customer.status,
