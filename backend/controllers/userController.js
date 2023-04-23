@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async(req, res) => {
     }
 
 
-    res.json({ message: 'Register User' });
+    //res.json({ message: 'Register User' });
 })
 
 // @desc Login User
