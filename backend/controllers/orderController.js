@@ -1,18 +1,56 @@
 const Orders = require('../models/orderModel')
+const subOrders = require('../models/subOrder')
 const Vendor = require('../models/vendorModel')
 const Inventory = require('../models/inventoryModel')
+const Product = require('../models/productModel')
 
  
 const createOrder = async(req, res)=>{
     try{
         const user = req.user
+        let products= req.body.products
+
+        const vendorOrders= {};
+
+        for(let i =0; i< products.length; i++){
+            const product= products[i]
+            const vendorID = await Product.findById(product.productId)
+
+            if(!vendorOrders[vendorID]){
+                vendorOrders[vendorID]= []
+            }
+            vendorOrders[vendorID].push(product);
+        }
+        
+        const subOrderIDs= []
+
+        for (const vendorId of Object.keys(vendorOrders)) {
+            const products = vendorOrders[vendorId];
+            let costOfProducts = 0;
+            for (let i = 0; i < products.length; i++) {
+              const product = products[i];
+              const cost = await Inventory.findById(product.productId);
+              costOfProducts += cost.price;
+            }
+            const subOrder = new subOrders({
+              customerId: user._id,
+              vendorId: vendorId,
+              products: products,
+              deals: [],
+              cost: costOfProducts
+            });
+
+            await subOrder.save();
+            subOrderIDs.push({ subOrderId: subOrder._id });
+        }
+          
+  
 
         const order = new Orders({
             customerId : user._id,
-            products: req.body.products,
+            subOrders: subOrderIDs,
             address: req.body.address,
             contact: req.body.contact,
-            deals: req.body.deals,
             paymentType: req.body.paymentType,
             status: req.body.status,
             cost: req.body.cost
@@ -56,10 +94,25 @@ const viewOrders = async(req, res)=>{
 
         const orders = await Orders.find({customerId: user._id})
 
+        const ordersWithProducts = [];
+
+        for (let i = 0; i < orders.length; i++) {
+            const order = orders[i];
+            const orderWithMinDetails = {
+                orderId: order._id,
+                orderDate: order.date,
+                paymentType: order.paymentType,
+                status: order.status,
+                cost: order.cost,
+            };
+            ordersWithProducts.push(orderWithProducts);
+        }
+
+
         if(orders.length>0){
             res.status(200).json({
                 success: true,
-                data: orders,
+                data: ordersWithProducts,
             })
         }
         else {
@@ -86,15 +139,42 @@ const viewOrder = async(req, res)=>{
         })
 
         if(order.length==1){
+            const orderWithAllInfo = [];
+            
+            const orderWithProducts = {
+                orderId: order[0]._id,
+                orderDate: order[0].orderDate,
+                subOrders: []
+            };
+            for (let j = 0; j < order[0].subOrders.length; j++) {
+                const subOrder = order[0].subOrders[j];
+                const products = [];
+                for (let k = 0; k < subOrder.products.length; k++) {
+                    const product = subOrder.products[k];
+                    const productDetails = await Inventory.findById(product.productId);
+                    products.push({
+                        name: productDetails.name,
+                        price: productDetails.price,
+                        quantity: product.quantity
+                    });
+                }
+                orderWithProducts.subOrders.push({
+                    subOrderId: subOrder._id,
+                    vendorId: subOrder.vendorId,
+                    products: products
+                });
+            }
+            orderWithAllInfo.push(orderWithProducts);
+
             res.status(200).json({
                 success: true,
-                data: order[0],
+                data: orderWithAllInfo,
             })
         }
         else{
             res.json({
                 success: false,
-                error: err.message
+                error: "An error while fetching your order has occurred"
             })
         }   
     } catch(err) {
@@ -110,7 +190,7 @@ const getVendorOrders = async(req, res)=>{
     const vendorId = user._id;
 
     try{
-        const vendorOrders = await Orders.find({vendorId : vendorId})
+        const vendorOrders = await subOrders.find({vendorId : vendorId})
 
         res.json({
             success: true,
@@ -130,7 +210,7 @@ const getAVendorOrder = async(req, res)=>{
     const vendorId = user._id;
 
     try{
-        const vendorOrder = await Orders.findOne({$and:[
+        const vendorOrder = await subOrders.findOne({$and:[
             {vendorId : vendorId},
             { _id: req.body.orderId}
         ]})
@@ -152,9 +232,9 @@ const vendorUpdateOrderStatus = async(req, res)=>{
         const user = req.user
         const vendorId = user._id
 
-        const order = await Orders.find({_id: req.body.order.orderId})
+        const order = await subOrders.find({_id: req.body.suborderId})
 
-        order.status = req.body.order.status;
+        order.status = req.body.status;
 
         const saveOrder = await order.save();
 

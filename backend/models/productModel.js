@@ -8,6 +8,11 @@ const productSchema = mongoose.Schema
             type: String,
             required: [true, "Enter name"]
         },
+        vendor:{
+            type: mongoose.Schema.Types.ObjectId,
+            required: [true, "Enter Vendor ID"],
+            ref: 'Vendor'
+        },
         description: {
             type: String,
         },
@@ -18,9 +23,12 @@ const productSchema = mongoose.Schema
         status: {
             type: mongoose.Schema.Types.Number,
             default: 0,
-
             ref: 'StatusEnum',
-
+        },
+        category:{
+            type: mongoose.Schema.Types.Number,
+            required: true,
+            ref: 'category'
         }
     },
     {

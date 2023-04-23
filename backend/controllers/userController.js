@@ -6,40 +6,41 @@ const User = require('../models/userModel')
 const registerUser = asyncHandler(async(req, res) => {
     const {email,  password, role} = req.body
 
-    if (!email || !password || !role) {
+    if (!email || !password) {
         res.status(400)
         throw new Error('Please add all fields')
     }
+    else{
+        const userExists = await User.findOne({email})
 
-    const userExists = await User.findOne({email})
+        if(userExists) {
+            res.status(400)
+            throw new Error('User already exists')
+        }
 
-    if(userExists) {
-        res.status(400)
-        throw new Error('User already exists')
-    }
+        // Hash password
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
-    //Create User
-    const user = await User.create ({
-        email,
-        role,
-        password: hashedPassword,
-    })
-
-    if (user) {
-        res.status(201).json({
-            _id: user.id,
-            email: user.email,
-            role: user.role,
-            token: generateToken(user._id),
+        //Create User
+        const user = await User.create ({
+            email,
+            role,
+            password: hashedPassword,
         })
-    }
-    else {
-        res.status(400)
-        throw new Error('Invalid user data')
+        
+        if (user) {
+            res.status(201).json({
+                _id: user.id,
+                email: user.email,
+                role: user.role,
+                token: generateToken(user.id),
+            })
+        }
+        else {
+            res.status(400)
+            throw new Error('Invalid user data')
+        }
     }
 })
 
@@ -48,7 +49,6 @@ const loginUser = asyncHandler(async(req, res) => {
 
     //Check for user email
     const user = await User.findOne({email})
-    console.log(user)
     
     if(user && (await bcrypt.compare(password, user.password))){
         res.json({
