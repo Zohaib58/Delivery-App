@@ -46,17 +46,14 @@ const viewInventory = async(req, res) => {
 //vendor adds new product
 const addProduct = async(req, res) => {
     try{
-        const userID = req.user.userID
-
-        const vendorRec = await Vendor.findById(userID)
-        const vendor = vendorRec.vendorId
-
-        const categoryCheck = await Category.find({name: req.body.Category})
+        const vendor = req.user._id
+ 
+        const categoryCheck = await Category.find({name: req.body.category})
 
         if(categoryCheck.length==1){
             const newProduct = new Product({
                 name : req.body.name,
-                vendorId: vendor,
+                vendor: vendor,
                 description : req.body.description,
                 image : req.body.image,
                 category: categoryCheck[0].catNum
@@ -81,6 +78,7 @@ const addProduct = async(req, res) => {
                     })
                 }
             } catch(err) {
+                console.log("reached")
                 res.json({
                     success: false,
                     error: err.message

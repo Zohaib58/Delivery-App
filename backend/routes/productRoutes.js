@@ -5,9 +5,9 @@ const {protect} = require('../middleware/authMiddleware')
 const {browseProducts,getProduct,searchProduct,
     toggleFav,viewFav} = require('../controllers/productController')
 
-router.get('/',protect, browseProducts)
+router.get('/:category',protect, browseProducts)
 router.get('/search',protect, searchProduct)
-router.get('/product',protect, getProduct)
+router.get('/product/:id',protect, getProduct)
 router.post('/toggleFav', protect, toggleFav)
 router.get('/favorites', protect, viewFav)
 

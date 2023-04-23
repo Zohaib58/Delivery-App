@@ -10,7 +10,7 @@ const addCategory = async(req, res) => {
         const numCheck = await Category.find({catNum: req.body.num})
 
         if(numCheck.length==0){
-            const newCategory = new Category({
+            const newCategory = await Category.create({
                 name: req.body.name,
                 catNum: req.body.num,
             })
@@ -53,4 +53,27 @@ const deleteCategory = async(req, res) => {
             data: "Unpreviliged access"
         })
     }
+}
+
+const getAllCategory = async(req, res) => {
+    const superAdminID = req.user._id
+
+    const check = await superAdmin.findById(superAdminID)
+
+    if(check){
+        const categories = await Category.find()
+        res.json(categories)
+    }
+    else{
+        res.json({
+            success: false,
+            data: "Unprrevilleged access"
+        })
+    }
+}
+
+module.exports = {
+    addCategory,
+    deleteCategory,
+    getAllCategory,
 }

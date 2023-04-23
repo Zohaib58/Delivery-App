@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const ObjectId = require('mongodb').ObjectId;
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const Vendor = require('../models/vendorModel')
@@ -7,22 +8,22 @@ const Vendor = require('../models/vendorModel')
 const createVendor = asyncHandler(async(req, res) => {
     const {companyName, website, status} = req.body
 
-    if (!companyName || !website || !status) {
+    if (!companyName || !website) {
         res.status(400)
         throw new Error('Please add all fields')
     } 
 
-    const vendorExists = await Vendor.findOne({companyName})
+    const vendorExists = await Vendor.findOne({companyName:companyName})
 
     if(vendorExists) {
         res.status(400)
         throw new Error('Vendor already exists')
     }
 
-    
+    console.log("reached")
     //Create Vendor
     const vendor = await Vendor.create ({
-       _id: req.user.id, companyName, website, status
+       _id: ObjectId(req.user.id), companyName:companyName, website: website, status: status
     })
 
     if (vendor) {
@@ -31,7 +32,6 @@ const createVendor = asyncHandler(async(req, res) => {
             companyName: vendor.companyName,
             website: vendor.website,
             status: vendor.status,
-            token: generateToken(_id),
         })
     }
     else {

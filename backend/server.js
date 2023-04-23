@@ -7,12 +7,16 @@ const category = require('./models/categoryModel')
 const express = require('express')
 const colors = require('colors')
 const dotenv = require('dotenv').config()
+const cors = require('cors');
+
+
 
 const {errorHandler} = require('./middleware/errorMiddleware')
 const connectDB = require('./config/db')
 
-const app = express()
 
+const app = express()
+app.use(cors());
 
 const port = process.env.PORT || 5000
 
@@ -31,6 +35,9 @@ app.use('/api/orders', require('./routes/orderRoutes'))
 app.use('/api/deals', require('./routes/dealRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/customer', require('./routes/customerRoutes'))
+
+app.use('/sapi', require('./routes/categoryRoutes'))
+app.use('/sapi/vendors', require("./routes/vendorRoutes"))
 
 
 

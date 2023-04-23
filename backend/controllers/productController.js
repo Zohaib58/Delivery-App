@@ -1,14 +1,35 @@
 const jwt = require('jsonwebtoken')
 const Product = require('../models/productModel')
+const Inventory = require('../models/inventoryModel')
 const Customer = require('../models/customerModel')
 const ObjectId = require('mongodb').ObjectId;
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {
+    const category = req.params.category
     try{
-        const products = await Product.find({category: req.body.category})
+        const products = await Product.find({category: category})
+        const inventoryItems = await Inventory.find();
 
-        res.json(products)
+        const productsWithPrice = products.map(product => {
+            const productId = product._id;
+            const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+
+            if (inventoryItem) {
+                return {
+                ...product._doc,
+                price: inventoryItem.price
+                };
+            } else {
+                return {
+                ...product._doc,
+                price: 0 
+                };
+            }
+        });
+
+
+        res.json(productsWithPrice);
     }catch(err){
         res.json({
             success: false,
@@ -20,11 +41,8 @@ const browseProducts = async(req, res) => {
 //customer views a specific product by clicking on it
 const getProduct = async(req, res) => {
     try{
-        const product = await Product.findById(req.body.productId)
-        res.status(200).json({
-            success: true,
-            data: product
-        })
+        const product = await Product.findById(req.params.id)
+        res.status(200).json(product)
     }catch(err){
         res.json({
             success: false,
