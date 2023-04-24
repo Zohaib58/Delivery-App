@@ -20,10 +20,8 @@ const createVendor = asyncHandler(async(req, res) => {
         throw new Error('Vendor already exists')
     }
 
-    console.log("reached")
-    //Create Vendor
     const vendor = await Vendor.create ({
-       _id: ObjectId(req.user.id), companyName:companyName, website: website, status: status
+       _id: req.user.id, companyName:companyName, website: website, status: status
     })
 
     if (vendor) {

@@ -5,19 +5,19 @@ const subOrderSchema = mongoose.Schema
     {
         //orderId will be ._id
         customerId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.String,
             required: true,
             ref: 'User'
         },
         vendorId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.String,
             required: true,
             ref: 'Vendor'
         },
         products: [
             {
                 ProductID: {
-                type: mongoose.Schema.Types.ObjectId,
+                type: mongoose.Schema.Types.String,
                 required: true, 
                 ref: 'Product',
                 },

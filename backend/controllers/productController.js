@@ -1,41 +1,51 @@
 const jwt = require('jsonwebtoken')
 const Product = require('../models/productModel')
 const Inventory = require('../models/inventoryModel')
+const Category = require('../models/categoryModel')
 const Customer = require('../models/customerModel')
 const ObjectId = require('mongodb').ObjectId;
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {
-    const category = req.params.category
+    const cat = req.params.category
     try{
-        const products = await Product.find({category: category})
-        const inventoryItems = await Inventory.find();
+        const category = await Category.findOne({name: cat})
+        const catNum = category.catNum
+        try{
+            const products = await Product.find({category: catNum})
+            const inventoryItems = await Inventory.find();
 
-        const productsWithPrice = products.map(product => {
-            const productId = product._id;
-            const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+            const productsWithPrice = products.map(product => {
+                const productId = product._id;
+                const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
 
-            if (inventoryItem) {
-                return {
-                ...product._doc,
-                price: inventoryItem.price
-                };
-            } else {
-                return {
-                ...product._doc,
-                price: 0 
-                };
-            }
-        });
-
-
-        res.json(productsWithPrice);
-    }catch(err){
+                if (inventoryItem) {
+                    return {
+                    ...product._doc,
+                    price: inventoryItem.price
+                    };
+                } else {
+                    return {
+                    ...product._doc,
+                    price: 0 
+                    };
+                }
+            });
+            res.json(productsWithPrice);
+        }catch(err){
+            res.json({
+                success: false,
+                error: err.message
+            })
+        }
+    } catch(err) {
         res.json({
-            success: false,
+            success:false,
             error: err.message
         })
     }
+        
+    
 }
 
 //customer views a specific product by clicking on it

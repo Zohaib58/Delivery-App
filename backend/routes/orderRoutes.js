@@ -9,7 +9,7 @@ const {createOrder,
 
 router.post('/createOrder',protect, createOrder);
 router.get('/', protect, viewOrders);
-router.get('/order', protect, viewOrder);
+router.get('/order/:orderId', protect, viewOrder);
 
 
 module.exports= router
