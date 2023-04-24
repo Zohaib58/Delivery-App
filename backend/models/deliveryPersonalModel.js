@@ -4,13 +4,13 @@ const deliveryPersonalSchema = mongoose.Schema
 (
     {
         dpId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
             unique: true,
             ref: 'User'
         },
         vendorId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: [true, "Enter Vendor ID"],
             ref: 'Vendor'
         },

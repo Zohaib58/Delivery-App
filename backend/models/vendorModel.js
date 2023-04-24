@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const vendorSchema = mongoose.Schema
 (
     {
+        _id: { type: String },
         companyName: {
             type: String,
             required: [true, "Enter company name"],

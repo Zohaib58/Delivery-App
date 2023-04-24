@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const ObjectId = require('mongodb').ObjectId;
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const Vendor = require('../models/vendorModel')
@@ -23,7 +22,7 @@ const createVendor = asyncHandler(async(req, res) => {
     console.log("reached")
     //Create Vendor
     const vendor = await Vendor.create ({
-       _id: ObjectId(req.user.id), companyName:companyName, website: website, status: status
+       _id: req.user.id, companyName:companyName, website: website, status: status
     })
 
     if (vendor) {
