@@ -4,12 +4,13 @@ const productSchema = mongoose.Schema
 (
     {
         //productId will be ._id
+        _id: { type: String },
         name: {
             type: String,
             required: [true, "Enter name"]
         },
         vendor:{
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: [true, "Enter Vendor ID"],
             ref: 'Vendor'
         },

@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
-const ObjectId = require('mongodb').ObjectId;
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const Vendor = require('../models/vendorModel')
+const ID = require('../id/id')
 
 //vendor views their product stock
 const viewInventory = async(req, res) => {
@@ -46,12 +46,13 @@ const viewInventory = async(req, res) => {
 //vendor adds new product
 const addProduct = async(req, res) => {
     try{
-        const vendor = req.user._id
+        const vendor = req.user.id
  
         const categoryCheck = await Category.find({name: req.body.category})
-
+        //console.log(categoryCheck)
         if(categoryCheck.length==1){
             const newProduct = new Product({
+                _id: await ID.id(Product),
                 name : req.body.name,
                 vendor: vendor,
                 description : req.body.description,

@@ -13,7 +13,7 @@ const createCustomer = asyncHandler(async (req, res) => {
     }
 
     const customer = await Customer.create({
-        customerId: req.user.id,
+        _id: req.user.id,
         name, 
         phoneNo,   
         status, 
