@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken')
 const Product = require('../models/productModel')
 const Inventory = require('../models/inventoryModel')
 const Customer = require('../models/customerModel')
-const ObjectId = require('mongodb').ObjectId;
+//const ObjectId = require('mongodb').ObjectId;
+const ID = require('../id/id')
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {

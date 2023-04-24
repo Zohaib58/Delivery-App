@@ -5,7 +5,7 @@ const dealSchema = mongoose.Schema
     {
         //dealId will be ._id
         vendorId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: [true, "Enter Vendor ID"], 
             ref: 'Vendor'
         },
@@ -36,7 +36,7 @@ const dealSchema = mongoose.Schema
         products: [
             {
                 productId: {
-                type: mongoose.Schema.Types.ObjectId,
+                type: String,
                 required: [true, "Select products"],
                 ref: 'Product' 
                 },

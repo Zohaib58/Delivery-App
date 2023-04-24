@@ -6,13 +6,14 @@ const paymentEnumSchema = mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      enum: [0, 1] // Restricts the values to only 0 or 1
+      enum: [0, 1], // Restricts the values to only 0 or 1
+      default: 0
     },
     paymentDescription: {
       type: String,
       required: true,
       unique: true,
-      enum: ["Cash on Delivery", "Through Card"] // Restricts the values to only "Cash on Delivery" or "Through Card"
+      enum: ["Cash on Delivery", "Card"] // Restricts the values to only "Cash on Delivery" or "Through Card"
     }
   },
   {

@@ -3,8 +3,8 @@ const subOrders = require('../models/subOrder')
 const Vendor = require('../models/vendorModel')
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
+const ID = require('../id/id')
 
- 
 const createOrder = async(req, res)=>{
     try{
         const user = req.user
@@ -14,8 +14,8 @@ const createOrder = async(req, res)=>{
 
         for(let i =0; i< products.length; i++){
             const product= products[i]
-            const vendorID = await Product.findById(product.productId)
-
+            const vendorProd = await Product.findById(product.ProductID)
+            const vendorID = vendorProd.vendor;
             if(!vendorOrders[vendorID]){
                 vendorOrders[vendorID]= []
             }
@@ -24,14 +24,17 @@ const createOrder = async(req, res)=>{
         
         const subOrderIDs= []
 
+        let orderCost =0
+
         for (const vendorId of Object.keys(vendorOrders)) {
             const products = vendorOrders[vendorId];
             let costOfProducts = 0;
             for (let i = 0; i < products.length; i++) {
               const product = products[i];
-              const cost = await Inventory.findById(product.productId);
-              costOfProducts += cost.price;
+              const cost = await Inventory.findOne({productId: product.ProductID});
+              costOfProducts += (cost.price*product.Quantity);
             }
+            orderCost+=costOfProducts;
             const subOrder = new subOrders({
               customerId: user._id,
               vendorId: vendorId,
@@ -41,39 +44,39 @@ const createOrder = async(req, res)=>{
             });
 
             await subOrder.save();
-            subOrderIDs.push({ subOrderId: subOrder._id });
+            subOrderIDs.push({ subOrderID: subOrder._id });
         }
-          
-  
+
 
         const order = new Orders({
-            customerId : user._id,
+            _id: await ID.id(Orders),
+            customerId : user.id,
             subOrders: subOrderIDs,
             address: req.body.address,
             contact: req.body.contact,
             paymentType: req.body.paymentType,
             status: req.body.status,
-            cost: req.body.cost
+            cost: orderCost
         })
 
         const savedOrder = await order.save();
 
-        for( let i = 0; i< order.products.length; i++){
-            let quantity= products[i].quantity;
-            const searchStock = await Inventory.findOne({productId: products[i].productId})
+        for( let i = 0; i< products.length; i++){
+            let quantity= products[i].Quantity;
+            const searchStock = await Inventory.findOne({productId: products[i].ProductID})
             searchStock.quantity = searchStock.quantity - quantity;
             const saveStock = await searchStock.save();
         }
 
-        for(let i = 0; i< order.deals.length; i++){
-            let products = deals[i].products;
-            for( let j = 0; j< order.products.length; j++){
-                let quantity= products[j].quantity;
-                const searchStock = await Inventory.findOne({productId: products[j].productId})
-                searchStock.quantity = searchStock.quantity - quantity;
-                const saveStock = await searchStock.save();
-            }
-        }
+        // for(let i = 0; i< order.deals.length; i++){
+        //     let products = deals[i].products;
+        //     for( let j = 0; j< order.products.length; j++){
+        //         let quantity= products[j].quantity;
+        //         const searchStock = await Inventory.findOne({productId: products[j].ProductID})
+        //         searchStock.quantity = searchStock.quantity - quantity;
+        //         const saveStock = await searchStock.save();
+        //     }
+        // }
 
         res.status(200).json({
             succuss: true,
@@ -86,7 +89,6 @@ const createOrder = async(req, res)=>{
         })
     }
 }
-
 //customers views his previous orders
 const viewOrders = async(req, res)=>{
     try{
@@ -151,7 +153,7 @@ const viewOrder = async(req, res)=>{
                 const products = [];
                 for (let k = 0; k < subOrder.products.length; k++) {
                     const product = subOrder.products[k];
-                    const productDetails = await Inventory.findById(product.productId);
+                    const productDetails = await Inventory.findOne(product.productID);
                     products.push({
                         name: productDetails.name,
                         price: productDetails.price,
