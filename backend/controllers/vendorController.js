@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const ObjectId = require('mongodb').ObjectId;
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const Vendor = require('../models/vendorModel')

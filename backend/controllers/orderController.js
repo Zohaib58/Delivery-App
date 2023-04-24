@@ -3,8 +3,8 @@ const subOrders = require('../models/subOrder')
 const Vendor = require('../models/vendorModel')
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
+const ID = require('../id/id')
 
- 
 const createOrder = async(req, res)=>{
     try{
         const user = req.user
@@ -49,6 +49,7 @@ const createOrder = async(req, res)=>{
 
 
         const order = new Orders({
+            _id: await ID.id(Orders),
             customerId : user.id,
             subOrders: subOrderIDs,
             address: req.body.address,
@@ -88,7 +89,6 @@ const createOrder = async(req, res)=>{
         })
     }
 }
-
 //customers views his previous orders
 const viewOrders = async(req, res)=>{
     try{

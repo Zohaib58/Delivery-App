@@ -4,12 +4,12 @@ const inventorySchema = mongoose.Schema
 (
     {
         productId: {
-            type: mongoose.Schema.Types.String,
+            type: String,
             required: [true, "Select products"],
             ref: 'Product' 
             },
         vendorId: {
-            type: mongoose.Schema.Types.String,
+            type: String,
             required: [true, "Enter Vendor ID"],
             ref: 'Vendor'
         },

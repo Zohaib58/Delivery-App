@@ -7,7 +7,7 @@ const orderSchema = mongoose.Schema
             type:String
         },
         customerId: {
-            type: mongoose.Schema.Types.String,
+            type: String,
             required: true,
             ref: 'User'
         },

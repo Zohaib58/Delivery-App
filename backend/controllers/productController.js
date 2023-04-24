@@ -3,7 +3,8 @@ const Product = require('../models/productModel')
 const Inventory = require('../models/inventoryModel')
 const Category = require('../models/categoryModel')
 const Customer = require('../models/customerModel')
-const ObjectId = require('mongodb').ObjectId;
+//const ObjectId = require('mongodb').ObjectId;
+const ID = require('../id/id')
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {

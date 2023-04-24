@@ -7,6 +7,7 @@ const statusEnumSchema = mongoose.Schema(
       required: true,
       unique: true,
       enum: [0, 1],
+      default: 0
     },
     statusDescription: {
       type: String,
