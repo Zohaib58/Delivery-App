@@ -10,34 +10,62 @@ const ID = require('../id/id')
 const browseProducts = async(req, res) => {
     const cat = req.params.category
     try{
-        const category = await Category.findOne({name: cat})
-        const catNum = category.catNum
-        try{
-            const products = await Product.find({category: catNum})
+        if(cat !== "All"){
+            const category = await Category.findOne({name: cat})
+            const catNum = category.catNum
+            try{
+                const products = await Product.find({category: catNum})
+                const inventoryItems = await Inventory.find();
+
+                const productsWithPrice = products.map(product => {
+                    const productId = product._id;
+                    const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+
+                    if (inventoryItem) {
+                        return {
+                        ...product._doc,
+                        price: inventoryItem.price,
+                        category: category.name,
+                        };
+                    } else {
+                        return {
+                        ...product._doc,
+                        price: 0,
+                        category: category.name,
+                        };
+                    }
+                });
+                res.json(productsWithPrice);
+            }catch(err){
+                res.json({
+                    success: false,
+                    error: err.message
+                })
+            }
+        }
+        else{
+            const Products = await Product.find();
             const inventoryItems = await Inventory.find();
 
-            const productsWithPrice = products.map(product => {
+            const productsWithPrice = Products.map(product => {
                 const productId = product._id;
                 const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
 
                 if (inventoryItem) {
                     return {
                     ...product._doc,
-                    price: inventoryItem.price
+                    price: inventoryItem.price,
+                    category: '-',
                     };
                 } else {
                     return {
                     ...product._doc,
-                    price: 0 
+                    price: 0,
+                    category: '-',
                     };
                 }
             });
             res.json(productsWithPrice);
-        }catch(err){
-            res.json({
-                success: false,
-                error: err.message
-            })
         }
     } catch(err) {
         res.json({
