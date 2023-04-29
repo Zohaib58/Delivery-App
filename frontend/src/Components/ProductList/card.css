@@ -1,0 +1,32 @@
+.product-card {
+    width: 20%; /* Set width to 20% to fit 5 cards in a row */
+    padding: 10px; /* Add padding to the card */
+    box-sizing: border-box; /* Include padding in width calculation */
+    display: flex; /* Set display to flex to center align image and content */
+    flex-direction: column; /* Set flex direction to column for vertical alignment */
+  }
+  
+  .product-card img {
+    max-width: 100%; /* Set image width to 100% of parent container */
+    height: auto; /* Allow image to adjust height proportionally */
+    object-fit: contain; /* Adjust object-fit property as needed */
+    margin-bottom: 10px; /* Add margin-bottom for spacing between image and content */
+  }
+  
+  .product-card .product-title {
+    font-size: 16px; /* Set font size for product title */
+    margin-bottom: 5px; /* Add margin-bottom for spacing between title and price */
+  }
+  
+  .product-card .product-price {
+    font-size: 14px; /* Set font size for product price */
+  }
+  
+  .product-card:hover {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .product-price {
+    color: #1baa97;
+  }
+  
