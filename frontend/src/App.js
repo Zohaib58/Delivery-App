@@ -1,58 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Admin, Resource } from 'react-admin';
-import simpleRestProvider from 'ra-data-simple-rest';
-import OrderList from './components/OrderList';
+import { fetchUtils, Admin, Resource } from "react-admin";
+import restProvider from "ra-data-simple-rest";
+import orderList from "./components/OrderList";
 
+const apiUrl = "http://localhost:5000/vapi";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlUxIiwiaWF0IjoxNjgyODUxMjI1LCJleHAiOjE2ODU0NDMyMjV9.gA0k0X0OdQBlOHwoiNWKIz7r5cnTiyXkUDH54oCjCjA";
 
-function App() {
-  const [dataProvider, setDataProvider] = useState(null);
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: 'zohaibazam58@gmail.com',
-            password: '2'
-          })
-        });
-        const data = await response.json();
-        console.log(data.token);
-        
-
-        const authHeader = `Bearer ${data.token}`;
-        const dataProvider = simpleRestProvider('http://localhost:5000/vapi/orders/', {
-          headers: {
-            Authorization: authHeader
-          }
-        });
-        console.log(dataProvider)
-
-        setToken(data.token);
-        setDataProvider(() => dataProvider);
-      } catch (error) {
-        console.error(error);
-        setDataProvider(() => Promise.reject(error));
-      }
-    };
-    fetchToken();
-  }, []);
-  
-  if (!dataProvider) {
-    return <div>Loading...</div>;
+const httpClient = (url, options = {}) => {
+  if (!options.headers) {
+    options.headers = new Headers({ Accept: "application/json" });
   }
+  options.headers.set("Authorization", `Bearer ${token}`);
+  // Set Access-Control-Expose-Headers and Content-Range headers for CORS
+  options.headers['X-Total-Count'] = '30'
+  options.headers['Access-Control-Expose-Headers'] = 'X-Total-Count'
+  return fetchUtils.fetchJson(url, options);
+};
 
+const dataProvider = restProvider(apiUrl, httpClient);
+console.log(dataProvider)
+//console.log(orderList);
 
-  return (
-    <Admin dataProvider={dataProvider}>
-      <Resource name="orders" list={OrderList} />
-    </Admin>
-  );
-}
+const App = () => (
+  <Admin dataProvider={dataProvider}>
+    <Resource name="orders"  list  = {orderList}/>
+  </Admin>
+);
 
 export default App;

@@ -193,6 +193,7 @@ const getVendorOrders = async(req, res)=>{
 
     try{
         const vendorOrders = await subOrders.find({vendorId : vendorId})
+        res.setHeader('Content-Range', `subOrders 0-${vendorOrders.length}/${vendorOrders.length}`);
 
         res.json({
             success: true,
