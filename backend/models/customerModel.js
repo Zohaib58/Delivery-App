@@ -25,7 +25,7 @@ const customerSchema = mongoose.Schema
         favourites: [
             {
                 productId: {
-                    type: mongoose.Schema.Types.ObjectId,
+                    type: mongoose.Schema.Types.String,
                     ref: "Product"
                 }
             }

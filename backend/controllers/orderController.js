@@ -96,7 +96,7 @@ const viewOrders = async(req, res)=>{
 
         const orders = await Orders.find({customerId: user._id})
 
-        const ordersWithProducts = [];
+        const ordersDisplay = [];
 
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
@@ -107,14 +107,14 @@ const viewOrders = async(req, res)=>{
                 status: order.status,
                 cost: order.cost,
             };
-            ordersWithProducts.push(orderWithProducts);
+            ordersDisplay.push(orderWithMinDetails);
         }
 
 
         if(orders.length>0){
             res.status(200).json({
                 success: true,
-                data: ordersWithProducts,
+                data: ordersDisplay,
             })
         }
         else {
@@ -132,13 +132,7 @@ const viewOrders = async(req, res)=>{
 const viewOrder = async(req, res)=>{
     try{
         const user = req.user
-
-        const order = await Orders.find({
-            $and: [
-                {customerId: user._id},
-                {orderId: req.body.orderId},
-            ]
-        })
+        const order = await Orders.find({_id: req.params.orderId})
 
         if(order.length==1){
             const orderWithAllInfo = [];
@@ -149,15 +143,18 @@ const viewOrder = async(req, res)=>{
                 subOrders: []
             };
             for (let j = 0; j < order[0].subOrders.length; j++) {
-                const subOrder = order[0].subOrders[j];
-                const products = [];
+                const subOrder = await subOrders.findById(order[0].subOrders[j].subOrderID);
+                
+                const products = []
                 for (let k = 0; k < subOrder.products.length; k++) {
                     const product = subOrder.products[k];
-                    const productDetails = await Inventory.findOne(product.productID);
+
+                    const productDetails = await Product.findById(product.ProductID);
+                    const invenDetails = await Inventory.findOne({productId:product.ProductID})
                     products.push({
                         name: productDetails.name,
-                        price: productDetails.price,
-                        quantity: product.quantity
+                        price: invenDetails.price,
+                        quantity: product.Quantity
                     });
                 }
                 orderWithProducts.subOrders.push({

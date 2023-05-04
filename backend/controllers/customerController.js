@@ -20,7 +20,6 @@ const createCustomer = asyncHandler(async (req, res) => {
         address, 
         favourites,
     })
-    
     if (customer) {
         res.status(201).json({
             name: customer.name,

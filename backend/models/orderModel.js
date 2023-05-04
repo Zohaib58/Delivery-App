@@ -3,8 +3,9 @@ const mongoose = require('mongoose')
 const orderSchema = mongoose.Schema
 (
     {
-        //orderId will be ._id
-        _id: { type: String },
+        _id:{
+            type:String
+        },
         customerId: {
             type: String,
             required: true,

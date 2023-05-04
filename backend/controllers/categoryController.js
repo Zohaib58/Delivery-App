@@ -2,7 +2,7 @@ const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
 
 const addCategory = async(req, res) => {
-    const superAdminID = req.user._id
+    const superAdminID = req.user.id
 
     const check = await superAdmin.findById(superAdminID)
 
@@ -36,7 +36,7 @@ const addCategory = async(req, res) => {
 }
 
 const deleteCategory = async(req, res) => {
-    const superAdminID = req.user._id
+    const superAdminID = req.user.id
 
     const check = await superAdmin.findById(superAdminID)
 
@@ -56,20 +56,9 @@ const deleteCategory = async(req, res) => {
 }
 
 const getAllCategory = async(req, res) => {
-    const superAdminID = req.user._id
 
-    const check = await superAdmin.findById(superAdminID)
-
-    if(check){
-        const categories = await Category.find()
-        res.json(categories)
-    }
-    else{
-        res.json({
-            success: false,
-            data: "Unprrevilleged access"
-        })
-    }
+    const categories = await Category.find()
+    res.json(categories)
 }
 
 module.exports = {

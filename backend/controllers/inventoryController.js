@@ -79,7 +79,6 @@ const addProduct = async(req, res) => {
                     })
                 }
             } catch(err) {
-                console.log("reached")
                 res.json({
                     success: false,
                     error: err.message
