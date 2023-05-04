@@ -7,8 +7,8 @@ const {getAVendorOrder,
     vendorUpdateOrderStatus} = require('../controllers/orderController')
 
 
-router.post('/',protect, getVendorOrders);
+router.get('/',protect, getVendorOrders);
 router.get('/orders/order', protect, getAVendorOrder);
-router.get('/editOrder', protect, vendorUpdateOrderStatus);
+router.patch('/editOrder', protect, vendorUpdateOrderStatus);
 
 module.exports= router

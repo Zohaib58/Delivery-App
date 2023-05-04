@@ -30,7 +30,7 @@ const productSchema = mongoose.Schema
         category:{
             type: mongoose.Schema.Types.Number,
             required: true,
-            ref: 'category'
+            ref: 'Category'
         }
     },
     {
