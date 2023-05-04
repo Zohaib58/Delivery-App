@@ -5,7 +5,7 @@ import Product from './ProductCard';
 import './ProductList.css';
 import SingleProduct from '../SIngleProduct';
 
-const ProductList = () => {
+const ProductList = ({searchKeyword}) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [ selectedCategory ] = useContext(CategoryContext);
@@ -13,9 +13,8 @@ const ProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await GetAllProducts({ category: selectedCategory });
+        const res = await GetAllProducts({ category: selectedCategory, keyword:searchKeyword });
         const data = res.data;
-
         setProducts(data);
       } catch (error) {
         console.log('Error occurred while fetching data:', error);
@@ -23,7 +22,7 @@ const ProductList = () => {
     };
 
     fetchProducts();
-  }, [selectedCategory]); 
+  }, [selectedCategory, searchKeyword]); 
 
   return (
     <div className="product-list">

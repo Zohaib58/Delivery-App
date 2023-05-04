@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { CartContext } from '../../context/cartContext';
 
 const CheckoutPage = () => {
-  const { cartItems, updateCart } = useContext(CartContext);
+  const { cartItems, updateCart, removeItem } = useContext(CartContext);
 
   const [quantityArray, setQuantityArray] = useState(
     cartItems.map((item) => item.quantity)
@@ -10,17 +10,27 @@ const CheckoutPage = () => {
 
   const handleQuantityChange = (e, index) => {
     const updatedQuantityArray = [...quantityArray];
-    updatedQuantityArray[index] = parseInt(e.target.value);
-    setQuantityArray(updatedQuantityArray);
-  
-    // Update the cart item in the cartItems array
+    const quantity = parseInt(e.target.value);
+    if (quantity <= 0) {
+      updatedQuantityArray[index] = 1;
+      setQuantityArray(updatedQuantityArray);
+    } else {
+      updatedQuantityArray[index] = parseInt(e.target.value);
+      setQuantityArray(updatedQuantityArray);
+    }
     updateCart({ index, quantity: updatedQuantityArray[index] });
   };
+  
   
 
   const handleConfirmOrder = () => {
     // Implement your logic for confirming the order here
   };
+
+  const handleRemoveItem = (index) => {
+    removeItem({index:index})
+  }
+
 
   const getTotalPrice = () => {
     let totalPrice = 0;
@@ -40,7 +50,7 @@ const CheckoutPage = () => {
               <img
                 src={item.image}
                 alt={item.name}
-                style={{ width: '100px', height: '100px' }}
+                style={{ width: '80px', height: '100px' }}
               />
             </div>
             <div style={{ flex: '3' }}>
@@ -49,7 +59,7 @@ const CheckoutPage = () => {
                 Quantity:{' '}
                 <input
                   type="number"
-                  value={quantityArray[index]}
+                  defaultValue={quantityArray[index]}
                   onChange={(e) => handleQuantityChange(e, index)}
                   style={{ width: '50px' }}
                   min={1}
@@ -58,6 +68,9 @@ const CheckoutPage = () => {
             </div>
             <div style={{ flex: '1' }}>
               <p>Price: PKR {item.price * quantityArray[index]}</p>
+            </div>
+            <div>
+              <button onClick={()=>handleRemoveItem(index)}>Delete</button>
             </div>
           </div>
         ))}

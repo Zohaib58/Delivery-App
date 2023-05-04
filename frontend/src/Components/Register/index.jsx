@@ -43,21 +43,20 @@ export const Register = (props) => {
                 password: pass, 
                 role: 1,
             });
-            // console.log(response1)
-            // localStorage.setItem('token', response1.data.token)
-            // const token = localStorage.getItem('token');
-            // await AxiosBase.post('api/customer/',{
-            //     customerId: response1.data._id,
-            //     name: name, 
-            //     phoneNo: phoneNo,   
-            //     status: status, 
-            //     address: address, 
-            //     favourites: [],
-            // },{
-            //     headers: {
-            //         'authorization': `Bearer ${token}`
-            //     }
-            // })
+            localStorage.setItem('token', response1.data.token)
+            const token = localStorage.getItem('token');
+            await AxiosBase.post('api/customer/',{
+                customerId: response1.data._id,
+                name: name, 
+                phoneNo: phoneNo,   
+                status: status, 
+                address: address, 
+                favourites: [],
+            },{
+                headers: {
+                    'authorization': `Bearer ${token}`
+                }
+            })
             window.location.assign('/');
             return null;
         } catch(err) {

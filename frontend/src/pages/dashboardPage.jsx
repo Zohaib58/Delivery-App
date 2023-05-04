@@ -8,32 +8,43 @@ import { CartProvider } from '../context/cartContext';
 
 const DashboardPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchKeyword, setSearchKeyword] = useState('AllProduct$');
+
+  const handleInputChange = (e) => {
+    const value = e.target.value.trim();
+    if (value === '') {
+      setSearchKeyword('AllProduct$');
+    } else {
+      setSearchKeyword(value);
+    }
+  };
+
   return (
     <>
       <header className="header-container">
-        <input type="text" className="search-bar" placeholder="Search using keywords..." />
+        <input type="text" className="search-bar" placeholder="Search using keywords..." onChange={handleInputChange}/>
         <button className="header-orders-button">My Orders</button>
         <button className='CheckOut' onClick={()=>window.location.assign('/user/check-out')}>Check Out</button>
         <button className="header-logout-button">Log Out</button>
       </header>
       <div className="dashboardPage-container">
-        <CartProvider>
       <CategoryContext.Provider value={[selectedCategory, setSelectedCategory]}>
-        <div className="column1">
-          <div>
-            <FilterSection />
-          </div>
-        </div>
-        <div className="column2">
-          <div>
-            <SortSection />
-          </div>
-          <div>
-            <ProductList />
-          </div>
-        </div>
+          <CartProvider>
+              <div className="column1">
+                <div>
+                  <FilterSection />
+                </div>
+              </div>
+              <div className="column2">
+                <div>
+                  <SortSection />
+                </div>
+                <div>
+                <ProductList searchKeyword={searchKeyword} />
+                </div>
+              </div>
+          </CartProvider>
         </CategoryContext.Provider>
-        </CartProvider>
       </div>
     </>
   );

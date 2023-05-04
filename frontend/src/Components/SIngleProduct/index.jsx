@@ -15,6 +15,7 @@ const SingleProduct = ({ id, Price }) => {
       try {
         const res = await GetAProduct({ productID: id });
         const data = res.data;
+        console.log(data)
         setProduct(data);
       } catch (error) {
         console.log('Error occurred while fetching product data:', error);
@@ -31,8 +32,8 @@ const SingleProduct = ({ id, Price }) => {
   const handleAddToCart = () => {
     const cartItem = {
       ...product,
-      quantity: quantity, // Adding quantity to cart item object
-      price: Price * quantity, // Adding totalPrice to cart item object
+      quantity: quantity, 
+      price: Price * quantity,
     };
     addToCart(cartItem);
   };
