@@ -42,7 +42,8 @@ const createVendor = asyncHandler(async(req, res) => {
 
 
 const getVendors = asyncHandler (async(req, res) => {
-    const vendors = await Vendor.find({ userId: req.user.id })
+    console.log("reached")
+    const vendors = await Vendor.find({_id : req.user.id})
 
     res.status(200).json(vendors)
 })

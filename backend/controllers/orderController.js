@@ -195,7 +195,6 @@ const getVendorOrders = async(req, res)=>{
         const vendorOrders = await subOrders.find({vendorId : vendorId})
 
         res.json({
-            success: true,
             data: vendorOrders
         })
 
