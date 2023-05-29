@@ -3,6 +3,7 @@ const Category = require('../models/categoryModel')
 const Product = require('../models/productModel')
 const Inventory = require('../models/inventoryModel')
 const Customer = require('../models/customerModel')
+const Vendor = require('../models/vendorModel')
 //const ObjectId = require('mongodb').ObjectId;
 const ID = require('../id/id')
 
@@ -12,7 +13,6 @@ const browseProducts = async(req, res) => {
     const cat = req.params.category
     try{
         if(cat !== "All" && req.params.keyword !== 'AllProduct$'){
-            
             const category = await Category.findOne({name: cat})
             const catNum = category.catNum
             try{
@@ -27,23 +27,26 @@ const browseProducts = async(req, res) => {
                 })
                 const inventoryItems = await Inventory.find();
 
-                const productsWithPrice = products.map(product => {
+                const productsWithPrice = []
+                for (const product of products) {
                     const productId = product._id;
                     const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+                    const vendorName = await Vendor.findOne({_id: product.vendor});
 
                     const fav = user.favourites.some(favourite => {
                         return favourite.productId && favourite.productId.toString() === productId.toString();
                       });
 
                     if (inventoryItem) {
-                        return {
+                        productsWithPrice.push({
                         ...product._doc,
+                        vendor: vendorName.companyName,
                         price: inventoryItem.price,
                         category: category.name,
                         isFav: fav
-                        };
+                        });
                     } 
-                });
+                }
                 res.json(productsWithPrice);
             }catch(err){
                 res.json({
@@ -61,6 +64,7 @@ const browseProducts = async(req, res) => {
             for (const product of Products) {
                 const productId = product._id;
                 const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+                const vendorName = await Vendor.findOne({_id: product.vendor});
 
                 let categoryName = '-';
                 if (product.category) {
@@ -78,6 +82,7 @@ const browseProducts = async(req, res) => {
                   
                 const productWithPrice = {
                     ...product._doc,
+                    vendor: vendorName.companyName,
                     category: categoryName,
                     price: price,
                     isFav: fav
@@ -93,23 +98,26 @@ const browseProducts = async(req, res) => {
             const Products = await Product.find({category: catNum});
             const inventoryItems = await Inventory.find();
 
-            const productsWithPrice = Products.map(product => {
+            const productsWithPrice = []
+            for (const product of Products) {
                 const productId = product._id;
                 const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+                const vendorName = await Vendor.findById(inventoryItem.vendorId)
 
                 const fav = user.favourites.some(favourite => {
                     return favourite.productId && favourite.productId.toString() === productId.toString();
                   });
 
                 if (inventoryItem) {
-                    return {
+                    productsWithPrice.push({
                     ...product._doc,
+                    vendor: vendorName.companyName,
                     price: inventoryItem.price,
                     category: cat,
                     isFav: fav
-                    };
+                    });
                 } 
-            });
+            };
             res.json(productsWithPrice);
         }
         else{
@@ -124,30 +132,33 @@ const browseProducts = async(req, res) => {
               const productsWithPrice = [];
 
               for (const product of Products) {
-              const productId = product._id;
-              const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
-  
-              let categoryName = '-';
-              if (product.category) {
-                  const category = await Category.findOne({catNum: product.category});
-                  if (category) {
-                  categoryName = category.name;
-                  }
-              }
-  
-              const price = inventoryItem ? inventoryItem.price : 0;
+                const productId = product._id;
+                const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
+                const vendorName = Vendor.find(item => item._id.toString() === inventoryItem.vendorId);
+                
+    
+                let categoryName = '-';
+                if (product.category) {
+                    const category = await Category.findOne({catNum: product.category});
+                    if (category) {
+                    categoryName = category.name;
+                    }
+                }
+    
+                const price = inventoryItem ? inventoryItem.price : 0;
 
-              const fav = user.favourites.some(favourite => {
-                return favourite.productId && favourite.productId.toString() === productId.toString();
-              });
-  
-              const productWithPrice = {
-                  ...product._doc,
-                  category: categoryName,
-                  price: price,
-                  isFav: fav
-              };
-              productsWithPrice.push(productWithPrice);
+                const fav = user.favourites.some(favourite => {
+                    return favourite.productId && favourite.productId.toString() === productId.toString();
+                });
+    
+                const productWithPrice = {
+                    ...product._doc,
+                    category: categoryName,
+                    vendor: vendorName.companyName,
+                    price: price,
+                    isFav: fav
+                };
+                productsWithPrice.push(productWithPrice);
               }
   
               res.json(productsWithPrice);
@@ -168,6 +179,8 @@ const browseProducts = async(req, res) => {
 const getProduct = async(req, res) => {
     try{
         const product = await Product.findById(req.params.id)
+        const vendor = await Vendor.findById(product.vendor)
+        product.vendor = vendor.companyName
         res.status(200).json(product)
     }catch(err){
         res.json({
