@@ -19,12 +19,16 @@ const DashboardPage = () => {
     }
   };
 
+  const handleCheckout = () => {
+    window.location.assign('/user/check-out')
+  }
+
   return (
     <>
       <header className="header-container">
         <input type="text" className="search-bar" placeholder="Search using keywords..." onChange={handleInputChange}/>
-        <button className="header-orders-button">My Orders</button>
-        <button className='CheckOut' onClick={()=>window.location.assign('/user/check-out')}>Check Out</button>
+        <button className="header-orders-button" onClick={()=>window.location.assign('/user/orders')}>My Orders</button>
+        <button className='CheckOut' onClick={handleCheckout}>Check Out</button>
         <button className="header-logout-button">Log Out</button>
       </header>
       <div className="dashboardPage-container">

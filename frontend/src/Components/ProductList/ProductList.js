@@ -27,7 +27,6 @@ const ProductList = ({searchKeyword}) => {
   return (
     <div className="product-list">
       {
-        
         products.map((curProduct) => {
           return <Product key={curProduct._id} curProduct={curProduct} onClick={() => setSelectedProduct(curProduct)}/>;
         })

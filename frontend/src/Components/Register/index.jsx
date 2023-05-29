@@ -70,34 +70,34 @@ export const Register = (props) => {
                 <div className='inputFields'>
                     <div className="column-left">
                         <div className="row">
-                            <label htmlFor="email">Email</label>
-                            <input value= {email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@example.com" id="email" name="email" style={{ borderColor: isValidEmail ? 'initial' : 'green',}}/>
+                            <label className= "row-label" htmlFor="email">Email</label>
+                            <input className= "row-input" value= {email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@example.com" id="email" name="email" style={{ borderColor: isValidEmail ? 'initial' : 'green',}}/>
                             {!isValidEmail && <span style={{color:"red"}}>Enter a valid Email</span>}
                         </div>
                         <div className="row">
-                            <label htmlFor="password">Password</label>
-                            <input value={pass} onChange={(e) => setPass(e.target.value)} type="password"  id="password" name="password" />
+                            <label className= "row-label" htmlFor="password">Password</label>
+                            <input className= "row-input" value={pass} onChange={(e) => setPass(e.target.value)} type="password"  id="password" name="password" />
                             {!isValidPass && <span style={{color:"red"}}>Password must be atleast of length 8 with atleast one letter and digit</span>}
                         </div>
                         <div className="row">
-                            <label htmlFor="cpassword">Confirm Password</label>
-                            <input value={cpass} onChange={(e) => setCPass(e.target.value)} type="password" id="cpassword" name="cpassword" />
+                            <label className= "row-label" htmlFor="cpassword">Confirm Password</label>
+                            <input className= "row-input" value={cpass} onChange={(e) => setCPass(e.target.value)} type="password" id="cpassword" name="cpassword" />
                             {!passCheck && <span style={{color:"red"}}>Passwords don't match</span>}
                         </div>
                     </div>
 
                     <div className="column-right">
                         <div className="row">
-                            <label htmlFor="name">Name</label>
-                            <input value= {name} onChange={(e) => setName(e.target.value)} type="text" id="name" name="name" />
+                            <label className= "row-label" htmlFor="name">Name</label>
+                            <input className= "row-input" value= {name} onChange={(e) => setName(e.target.value)} type="text" id="name" name="name" />
                         </div>
                         <div className='row'>
-                            <label htmlFor="address">Address</label>
-                            <input value= {address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder="123 street, ABC society, City" id="address" name="address" />
+                            <label className= "row-label" htmlFor="address">Address</label>
+                            <input className= "row-input" value= {address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder="123 street, ABC society, City" id="address" name="address" />
                         </div>
                         <div className="row">
-                            <label htmlFor='contact'>Contact</label>
-                            <input value= {phoneNo} onChange={(e) => setContact(e.target.value)} type="number" placeholder="33xxxxxxxx" id="contact" name="contact" />
+                            <label className= "row-label" htmlFor='contact'>Contact</label>
+                            <input className= "row-input" value= {phoneNo} onChange={(e) => setContact(e.target.value)} type="number" placeholder="33xxxxxxxx" id="contact" name="contact" />
                         </div>
                     </div>
                 </div>

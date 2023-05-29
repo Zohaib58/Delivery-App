@@ -37,10 +37,10 @@ export const Login = (props) => {
     return(
         <div className='auth-login-Form'>
             <form className='login-form' onSubmit={handleSubmit}>
-                <label htmlFor="email">Email: </label>
-                <input value= {email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@example.com" id="email" name="email" />
-                <label htmlFor="password">Password: </label>
-                <input value={pass} onChange={(e) => setPass(e.target.value)} type="password" id="password" name="password" />
+                <label className= "lrow-label" htmlFor="email">Email: </label>
+                <input className= "row-input" value= {email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@example.com" id="email" name="email" />
+                <label className= "lrow-label" htmlFor="password">Password: </label>
+                <input className= "row-input" value={pass} onChange={(e) => setPass(e.target.value)} type="password" id="password" name="password" />
                 <ActionButton buttonName={"Log In"}></ActionButton>
                 <LinkButton buttonName={"Create account"} props={props} text={'Register'}/>
             </form>

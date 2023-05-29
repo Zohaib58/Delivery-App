@@ -40,13 +40,13 @@ button {
 }
 
   
-.row label {
+.row-label {
   text-align: left;
   color: #444;
   padding-left: 5vh;
 }
 
-.row input {
+.row-input {
   width: 250px;
   margin: 0.5rem 0;
   border: none;
