@@ -35,7 +35,7 @@ const createCustomer = asyncHandler(async (req, res) => {
 })
 
 const getCustomers = asyncHandler(async (req, res) => {
-    const customers = await Customer.find({ _id: req.user.id })
+    const customers = await Customer.findOne({ _id: req.user.id })
     res.status(200).json(customers)
 })
 
