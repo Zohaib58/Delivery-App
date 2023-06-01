@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import DashboardHeader from '../../components/DashboardHeader';
 
-import all_orders from '../../data/orders.js';
 import {calculateRange, sliceData} from '../../utils/table-pagination';
 
 import '../styles.css';
@@ -9,39 +8,59 @@ import DoneIcon from '../../assets/icons/done.svg';
 import CancelIcon from '../../assets/icons/cancel.svg';
 import RefundedIcon from '../../assets/icons/refunded.svg';
 
+import FetchDataComponent from '../../data/fetchData';
+console.log(FetchDataComponent('vapi/orders/'));
+
+
 function Orders () {
     const [search, setSearch] = useState('');
-    const [orders, setOrders] = useState(all_orders);
+    const [orders, setOrders] = useState([]);
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState([]);
 
     useEffect(() => {
-        setPagination(calculateRange(all_orders, 5));
-        setOrders(sliceData(all_orders, page, 5));
-    }, []);
-
-    // Search
-    const __handleSearch = (event) => {
-        setSearch(event.target.value);
-        if (event.target.value !== '') {
-            let search_results = orders.filter((item) =>
-                item.first_name.toLowerCase().includes(search.toLowerCase()) ||
-                item.last_name.toLowerCase().includes(search.toLowerCase()) ||
-                item.product.toLowerCase().includes(search.toLowerCase())
-            );
-            setOrders(search_results);
+        const fetchData = async () => {
+          try {
+            const result = await FetchDataComponent('vapi/orders/');
+            console.log(result)
+            setOrders(result);
+            setPagination(calculateRange(result, 5));
+            setOrders(sliceData(result, page, 5));
+          } catch (error) {
+            console.log(error);
+          }
+        };
+      
+        fetchData();
+      }, [page]);
+      
+      const __handleSearch = (event) => {
+        const value = event.target.value;
+        setSearch(value);
+      
+        if (value !== '') {
+          const searchResults = orders.filter((order) =>
+            order.first_name.toLowerCase().includes(value.toLowerCase()) ||
+            order.last_name.toLowerCase().includes(value.toLowerCase()) ||
+            order.product.toLowerCase().includes(value.toLowerCase())
+          );
+      
+          setOrders(searchResults);
+          setPagination(calculateRange(searchResults, 5));
+          setPage(1);
+        } else {
+          setOrders(orders);
+          setPagination(calculateRange(orders, 5));
+          setPage(1);
         }
-        else {
-            __handleChangePage(1);
-        }
-    };
-
-    // Change Page 
-    const __handleChangePage = (new_page) => {
-        setPage(new_page);
-        setOrders(sliceData(all_orders, new_page, 5));
-    }
-
+      };
+      
+      const __handleChangePage = (newPage) => {
+        setPage(newPage);
+        setOrders(sliceData(orders, newPage, 5));
+      };
+      
+      
     return(
         <div className='dashboard-content'>
             <DashboardHeader
@@ -65,21 +84,20 @@ function Orders () {
                         <th>ID</th>
                         <th>DATE</th>
                         <th>STATUS</th>
-                        <th>COSTUMER</th>
+                        <th>Customer</th>
                         <th>PRODUCT</th>
-                        <th>REVENUE</th>
-                        <th>REVENUE 2</th>
+                        <th>Cost</th>
                     </thead>
 
                     {orders.length !== 0 ?
                         <tbody>
                             {orders.map((order, index) => (
                                 <tr key={index}>
-                                    <td><span>{order.id}</span></td>
-                                    <td><span>{order.date}</span></td>
+                                    <td><span>{order._id}</span></td>
+                                    <td><span>{order.createdAt}</span></td>
                                     <td>
                                         <div>
-                                            {order.status === 'Paid' ?
+                                            {order.status === 0 ?
                                                 <img
                                                     src={DoneIcon}
                                                     alt='paid-icon'
@@ -101,11 +119,11 @@ function Orders () {
                                     <td>
                                         <div>
                                           
-                                            <span>{order.first_name}</span>
+                                            <span>{order.customerId}</span>
                                         </div>
                                     </td>
                                     <td><span>{order.product}</span></td>
-                                    <td><span>${order.price}</span></td>
+                                    <td><span>${order.cost}</span></td>
                                 </tr>
                             ))}
                         </tbody>

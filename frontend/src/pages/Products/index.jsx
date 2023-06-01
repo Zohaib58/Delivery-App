@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import DashboardHeader from '../../components/DashboardHeader';
 
-import all_orders from '../../data/products.js';
+//import all_orders from '../../data/products.js';
 import {calculateRange, sliceData} from '../../utils/table-pagination';
 
 import '../styles.css';
@@ -9,6 +9,7 @@ import DoneIcon from '../../assets/icons/done.svg';
 import CancelIcon from '../../assets/icons/cancel.svg';
 import RefundedIcon from '../../assets/icons/refunded.svg';
 
+let all_orders = [1,2,3,5,5,56,,6,,77,,88,8,8,9,9,99,9,9,9,9,9]
 function Orders () {
     const [search, setSearch] = useState('');
     const [orders, setOrders] = useState(all_orders);

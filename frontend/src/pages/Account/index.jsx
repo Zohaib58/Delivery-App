@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DashboardHeader from '../../components/DashboardHeader';
-import account from '../../data/accounts.js';
+//import account from '../../data/accounts.js';
 import '../styles.css';
-
+let account = [1,2,3]
 function Orders() {
   const [data, setData] = useState(null);
 

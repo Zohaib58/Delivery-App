@@ -19,7 +19,6 @@ const createVendor = asyncHandler(async(req, res) => {
         throw new Error('Vendor already exists')
     }
 
-    console.log("reached")
     //Create Vendor
     const vendor = await Vendor.create ({
        _id: req.user.id, companyName:companyName, website: website, status: status
@@ -42,8 +41,8 @@ const createVendor = asyncHandler(async(req, res) => {
 
 
 const getVendors = asyncHandler (async(req, res) => {
-    console.log("reached")
-    const vendors = await Vendor.find({_id : req.user.id})
+   
+    const vendors = await Vendor.find(req.user.id)
 
     res.status(200).json(vendors)
 })

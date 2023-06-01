@@ -8,6 +8,7 @@ import './App.css';
 import Orders from './pages/Orders';
 import Products from './pages/Products';
 import Account from './pages/Account';
+import Dashboard from './pages/Dashboard';
 
 function App () {
   return(
@@ -18,7 +19,6 @@ function App () {
           <div className='dashboard-body'>
               <Routes>
                   <Route path="*" element={<div></div>} />
-                  <Route exact path="/" element={<div></div>} />
                   <Route exact path="/orders" element={< Orders/>} />
                   <Route exact path="/products" element={< Products/>} />
                   <Route exact path="/locations" element={<div></div>} />
