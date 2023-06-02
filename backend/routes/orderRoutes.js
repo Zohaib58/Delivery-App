@@ -11,7 +11,7 @@ const {createOrder,
 router.post('/createOrder',protect, createOrder);
 router.get('/', protect, viewOrders);
 router.get('/order/:orderId', protect, viewOrder);
-router.patch('/cancelorder/:orderId', protect, cancelOrder)
+router.patch('/cancelorder', protect, cancelOrder)
 
 
 module.exports= router

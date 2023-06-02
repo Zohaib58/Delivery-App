@@ -5,10 +5,15 @@ const orderStatus = require('../enum/orderEnum')
 const Vendor = require('../models/vendorModel')
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
+const { Mutex } = require('async-mutex');
+const {getQFn} = require('./productController')
 const ID = require('../id/id')
 
+
 const createOrder = async(req, res)=>{
+    
     try{
+        
         const user = req.user
         let products= req.body.products
 
@@ -34,7 +39,18 @@ const createOrder = async(req, res)=>{
             for (let i = 0; i < products.length; i++) {
               const product = products[i];
               const cost = await Inventory.findOne({productId: product.ProductID});
-              costOfProducts += (cost.price*product.Quantity);
+              const prodcount = await getQFn(product.ProductID)
+              if(prodcount>=product.Quantity){
+                costOfProducts += (cost.price*product.Quantity);
+                product.Price = cost.price
+              }
+              else{
+                res.json({
+                    success: false,
+                    message: `Error occurred. Not enough stock for ${product.ProductID}`
+                })
+                return;
+              }
             }
             orderCost+=costOfProducts;
             const subOrder = new subOrders({
@@ -80,16 +96,14 @@ const createOrder = async(req, res)=>{
         //     }
         // }
 
-        res.status(200).json({
-            succuss: true,
-            data: savedOrder,
-        })
+        res.status(200).json({savedOrder})
     } catch(err) {
         res.json({
             success: false,
             error: err.message
         })
     }
+
 }
 //customers views his previous orders
 const viewOrders = async(req, res)=>{
@@ -153,17 +167,16 @@ const viewOrder = async(req, res)=>{
             };
             for (let j = 0; j < order[0].subOrders.length; j++) {
                 const subOrder = await subOrders.findById(order[0].subOrders[j].subOrderID);
-                
+
                 const products = []
                 for (let k = 0; k < subOrder.products.length; k++) {
                     const product = subOrder.products[k];
 
                     const productDetails = await Product.findById(product.ProductID);
-                    const invenDetails = await Inventory.findOne({productId:product.ProductID})
                     const vendor = await Vendor.findById(productDetails.vendor)
                     products.push({
                         name: productDetails.name,
-                        price: invenDetails.price,
+                        price: product.Price,
                         quantity: product.Quantity,
                         image: productDetails.image,
                         vendor: vendor.companyName
@@ -196,26 +209,32 @@ const cancelOrder = async(req, res) => {
     try{
         const order = await Orders.findById(req.body.orderID)
         const orderStat = await orderStatus.findOne({orderNum: order.status})
-        if (orderStat.orderDescription === "Confirmed" || orderStat.orderDescription === "In Process"){
-            const cancelOrderNum = await orderStatus.findOne({orderDescription: "Cancelled"})
-            order.status = cancelOrderNum.orderNum;
-            order.save
-            for (const subOrder of order.subOrders){
-                const SO = await subOrders.findById(subOrder.subOrderID)
-                SO.status = cancelOrder.orderNum
-                SO.save
+        if(orderStat) {
+            if (orderStat.orderDescription === "Confirmed" || orderStat.orderDescription === "In Process"){
+                const cancelOrderNum = await orderStatus.findOne({orderDescription: "Cancelled"})
+                order.status = cancelOrderNum.orderNum;
+                await order.save()
+                for (const subOrder of order.subOrders){
+                    const SO = await subOrders.findById(subOrder.subOrderID)
+                    SO.status = cancelOrder.orderNum
+                    await SO.save()
+                }
+                res.json("Order Cancelled")
             }
-            res.json({
-                success: true,
-                message: "Order Cancelled"
-            })
+            else{
+                res.json({
+                    success: false,
+                    message: "Order cant be cancelled"
+                })
+            }
         }
-        else{
+        else {
             res.json({
                 success: false,
-                message: "Order cant be cancelled"
+                message: "Order cant be accessed"
             })
         }
+        
     } catch (err) {
         res.json({
             success: false,
@@ -254,10 +273,7 @@ const getAVendorOrder = async(req, res)=>{
             { _id: req.body.orderId}
         ]})
 
-        res.json({
-            success: true,
-            data: vendorOrder
-        })
+        res.json({ vendorOrder })
     } catch(err) {
         res.json({
             success: false,
@@ -277,10 +293,7 @@ const vendorUpdateOrderStatus = async(req, res)=>{
 
         const saveOrder = await order.save();
 
-        res.json({
-            success: true,
-            data: "Order Status updated!"
-        })
+        res.json("Order Status updated!")
     } catch(err) {
         res.json({
             success: false,
@@ -300,15 +313,12 @@ const dpUpdateOrderStatus = async(req, res)=>{
             order.status = req.body.order.status;
 
             const saveOrder = await order.save();
-            res.json({
-                success: true,
-                data: "Order Status updated!"
-            })
+            res.json("Order Status updated!")
         }
         else {
             res.json({
                 success: false,
-                error: "You dont have access to this order"
+                error: "Unauthorized access"
             })
         }
     } catch(err) {
@@ -326,10 +336,7 @@ const viewApprovedOrders = async(req,res)=>{
             {status: 1}
         ]})
         
-        res.json({
-            success: true,
-            data: orders
-        })
+        res.json( orders )
 
     }catch(err) {
         res.json({
@@ -351,10 +358,7 @@ const acceptOrderToDeliver = async(req, res)=>{
             order.status = 2
 
             const saveOrder = await order.save();
-            res.json({
-                success: true,
-                data: "Order Accepted"
-            })
+            res.json( "Order Accepted" )
         }
         else {
             res.json({
