@@ -194,10 +194,7 @@ const getVendorOrders = async(req, res)=>{
     try{
         const vendorOrders = await subOrders.find({vendorId : vendorId})
 
-        res.json({
-            success: true,
-            data: vendorOrders
-        })
+        res.json(vendorOrders)
 
     }catch(err) {
         res.json({

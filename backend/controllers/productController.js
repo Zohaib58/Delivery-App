@@ -144,10 +144,36 @@ const viewFav = async(req, res)=>{
     }
 }
 
+
+const getVendorProducts = async(req, res) => {
+    try{
+        const vendorId = req.user._id
+        const products = await Product.find({vendor: vendorId})
+        
+        if (products.length > 0)
+        {
+            res.status(200).json(
+                products            )
+        }
+        else{
+            res.status(404).json("No products found")
+        }
+
+
+    }
+    catch(err)
+    {
+        res.json({
+            success: false,
+            error: err.message
+        })
+    }
+}
 module.exports = {
     browseProducts,
     getProduct,
     searchProduct,
     toggleFav,
-    viewFav
+    viewFav,
+    getVendorProducts
 }
