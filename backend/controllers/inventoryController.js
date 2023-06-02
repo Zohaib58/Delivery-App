@@ -47,12 +47,31 @@ const viewInventory = async(req, res) => {
 const addProduct = async(req, res) => {
     try{
         const vendor = req.user.id
- 
         const categoryCheck = await Category.find({name: req.body.category})
         //console.log(categoryCheck)
+        
+        const id = async(collection) => {
+            try {
+              const doc = await collection.findOne({vendor}).sort({ createdAt: -1 })
+              
+              if (doc === null){
+                return collection.modelName[0].toUpperCase() + '1';
+              }
+              else{
+                const oldId = doc._id;
+                const num = parseInt(oldId.slice(1)) + 1;
+                return oldId[0] + num;
+              }  
+            } catch (err) {
+              console.log(err)
+              throw new Error('Unable to generate ID')
+            }
+          }
+
         if(categoryCheck.length==1){
+            
             const newProduct = new Product({
-                _id: await ID.id(Product),
+                _id: vendor + await id(Product),
                 name : req.body.name,
                 vendor: vendor,
                 description : req.body.description,
