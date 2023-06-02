@@ -24,6 +24,9 @@ const subOrderSchema = mongoose.Schema
                 Quantity: {
                     type: Number,
                     default: 1,
+                },
+                Price: {
+                    type: Number,
                 }
             }
         ],

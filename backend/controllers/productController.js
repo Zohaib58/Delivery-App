@@ -4,13 +4,31 @@ const Product = require('../models/productModel')
 const Inventory = require('../models/inventoryModel')
 const Customer = require('../models/customerModel')
 const Vendor = require('../models/vendorModel')
-//const ObjectId = require('mongodb').ObjectId;
+const Status = require('../enum/statusEnum')
 const ID = require('../id/id')
+
+const getQFn = async(productID) => {
+    const ProductInventoryInfo = await Inventory.findOne({productId: productID})
+    return ProductInventoryInfo.quantity
+}
+
+const getQuantity = async(req, res) => {
+    try{
+        const quantity = await getQFn(req.params.productID)
+        res.json(quantity);
+    } catch (err) {
+        res.json({
+            success:false,
+            error: err.message
+        })
+    }
+}
 
 //customer is displayed all the products
 const browseProducts = async(req, res) => {
     const user = await Customer.findById(req.user.id)
     const cat = req.params.category
+    const Activestatus = await Status.findOne({statusDescription: "Active"})
     try{
         if(cat !== "All" && req.params.keyword !== 'AllProduct$'){
             const category = await Category.findOne({name: cat})
@@ -18,11 +36,14 @@ const browseProducts = async(req, res) => {
             try{
                 const products = await Product.find({
                     $and: [
-                        {category: catNum},{
+                        {category: catNum},
+                        {
                             $or: [
-                            {name : {$regex : req.params.keyword, $options: "i"}},
-                            {discription: {$regex : req.params.keyword, $options: "i"}},
-                        ]}
+                                {name : {$regex : req.params.keyword, $options: "i"}},
+                                {discription: {$regex : req.params.keyword, $options: "i"}},
+                            ]
+                        },
+                        {status: Activestatus.statusNum}
                     ]
                 })
                 const inventoryItems = await Inventory.find();
@@ -56,7 +77,7 @@ const browseProducts = async(req, res) => {
             }
         }
         else if(req.params.keyword === 'AllProduct$' && cat === 'All'){
-            const Products = await Product.find();
+            const Products = await Product.find({status: Activestatus.statusNum});
             const inventoryItems = await Inventory.find();
 
             const productsWithPrice = [];
@@ -95,7 +116,11 @@ const browseProducts = async(req, res) => {
         else if(req.params.keyword === 'AllProduct$'){
             const category = await Category.findOne({name: cat})
             const catNum = category.catNum
-            const Products = await Product.find({category: catNum});
+            const Products = await Product.find({$and: [
+                    {category: catNum},
+                    {status: Activestatus.statusNum}
+                ]
+            });
             const inventoryItems = await Inventory.find();
 
             const productsWithPrice = []
@@ -121,12 +146,14 @@ const browseProducts = async(req, res) => {
             res.json(productsWithPrice);
         }
         else{
-            const Products = await Product.find({
+            
+            const Products = await Product.find({$and:[{
                 $or: [
                   { name: { $regex: req.params.keyword, $options: "i" } },
-                  { discription: { $regex: req.params.keyword, $options: "i" } },
-                ],
-              }).populate('category', 'name'); 
+                  { description: { $regex: req.params.keyword, $options: "i" } },
+                ]},
+                {status: Activestatus.statusNum}]
+              }); 
               
               const inventoryItems = await Inventory.find();
               const productsWithPrice = [];
@@ -134,17 +161,18 @@ const browseProducts = async(req, res) => {
               for (const product of Products) {
                 const productId = product._id;
                 const inventoryItem = inventoryItems.find(item => item.productId.toString() === productId.toString());
-                const vendorName = Vendor.find(item => item._id.toString() === inventoryItem.vendorId);
+                const vendorName = await Vendor.findById(inventoryItem.vendorId.toString());
                 
-    
+                
                 let categoryName = '-';
                 if (product.category) {
                     const category = await Category.findOne({catNum: product.category});
+                    
                     if (category) {
                     categoryName = category.name;
                     }
                 }
-    
+                
                 const price = inventoryItem ? inventoryItem.price : 0;
 
                 const fav = user.favourites.some(favourite => {
@@ -162,8 +190,6 @@ const browseProducts = async(req, res) => {
               }
   
               res.json(productsWithPrice);
-  
-                       
         }
     } catch(err) {
         res.json({
@@ -199,10 +225,7 @@ const searchProduct = async(req, res) => {
             {discription: {$regex : req.body.keyword, $options: "i"}},
         ]});
 
-        res.status(200).json({
-            success: true,
-            data: products
-        })
+        res.status(200).json({ products })
     }catch(err){
         res.json({
             success: false,
@@ -266,10 +289,7 @@ const viewFav = async(req, res)=>{
         });
 
         if(favProducts.length>0){
-            res.status(200).json({
-                success: true,
-                data: favProducts
-            })
+            res.status(200).json({favProducts})
         }
         else {
             res.status(404).json("No favorite products");
@@ -287,5 +307,7 @@ module.exports = {
     getProduct,
     searchProduct,
     toggleFav,
-    viewFav
+    viewFav,
+    getQuantity,
+    getQFn
 }

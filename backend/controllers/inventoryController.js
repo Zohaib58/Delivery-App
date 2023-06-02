@@ -48,8 +48,8 @@ const addProduct = async(req, res) => {
     try{
         const vendor = req.user.id
  
-        const categoryCheck = await Category.find({name: req.body.category})
-        //console.log(categoryCheck)
+        const categoryCheck = await Category.findOne({name: req.body.category})
+
         if(categoryCheck.length==1){
             const newProduct = new Product({
                 _id: await ID.id(Product),
@@ -57,7 +57,7 @@ const addProduct = async(req, res) => {
                 vendor: vendor,
                 description : req.body.description,
                 image : req.body.image,
-                category: categoryCheck[0].catNum
+                category: categoryCheck.catNum
             })
     
             try{
