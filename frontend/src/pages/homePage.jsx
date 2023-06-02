@@ -4,21 +4,7 @@ import { Register } from '../Components/Register';
 import {useState} from 'react';
 
 export default function HomePage() {
-    // const handleChange=()=> {
-    //     alert('button click')
-    // }
-
-    // return (
-    //     <>
-    //         <div>
-    //             DISPLAY ON HOME PAGE
-    //         </div>
-    //         <ActionButton Name="TEST1" onClick= {()=>handleChange()}></ActionButton>
-    //     </>
-
-    // )
-
-    const [DisplayForm, setDisplayForm] = useState('Login');
+  const [DisplayForm, setDisplayForm] = useState('Login');
 
   const toggleForm = (formName) => {
     setDisplayForm(formName);

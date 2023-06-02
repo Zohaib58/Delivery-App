@@ -39,4 +39,17 @@ const GetAOrder = async({id})=> {
   return res;
 }
 
-export {CreateOrder, GetOrders, GetAOrder}
+const CancelOrder = async({id}) => {
+  const token = localStorage.getItem('token');
+  const res = await AxiosBase.patch('/api/orders/cancelorder', {
+    orderID: id
+  },{
+    headers: {
+      authorization: `Bearer ${token}`
+    }
+  })
+
+  return res
+}
+
+export {CreateOrder, GetOrders, GetAOrder, CancelOrder}

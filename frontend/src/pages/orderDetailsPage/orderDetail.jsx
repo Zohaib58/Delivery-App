@@ -13,6 +13,7 @@ const OrderDetails = () => {
     const [address, setAddress] = useState('');
     const [paymentType, setPaymentType]= useState(0);
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [quantityError, setQuantityError] = useState('');
  
     useEffect(()=> {
         const fetchinfo = async () => {
@@ -38,15 +39,25 @@ const OrderDetails = () => {
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
-      };
+    };
 
       
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            setOpenSnackbar(true);
+            console.log("here")
             const res= await CreateOrder({products, address, contact: phoneNo, paymentType:paymentType})
+            console.log(res)
+            if(res.data.success === false){
+                setOpenSnackbar(true);
+                setQuantityError(res.data.message);
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                window.location.assign('/user/check-out');
+            }
+
+            setOpenSnackbar(true);
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             window.location.assign('/user/orders')
         } catch(err) {
             console.error(err);
@@ -88,9 +99,15 @@ const OrderDetails = () => {
                     </form>
                 </div>
                 <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ minWidth: 'auto' }}>
-                Order placed!
-                </Alert>
+                    {
+                        quantityError==='' ? 
+                        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ minWidth: 'auto' }}>
+                            Order placed!
+                        </Alert> : 
+                        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ minWidth: 'auto' }}>
+                            {quantityError}
+                        </Alert>
+                    }
                 </Snackbar>
             </div>
         )  

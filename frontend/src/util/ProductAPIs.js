@@ -34,4 +34,15 @@ const toggleFav = async({productID}) => {
   return res;
 }
 
-export { GetAllProducts, GetAProduct, toggleFav };
+const getProductCount = async({productID}) => {
+  const token = localStorage.getItem('token');
+  const res = await AxiosBase.get(`/api/products/getQuantity/${productID}`,{
+    headers: {
+      authorization: `Bearer ${token}`
+    }
+  })
+  
+  return res;
+}
+
+export { GetAllProducts, GetAProduct, toggleFav, getProductCount };

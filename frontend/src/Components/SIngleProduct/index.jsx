@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { GetAProduct } from '../../util/ProductAPIs';
+import { GetAProduct, getProductCount } from '../../util/ProductAPIs';
 import { CartContext } from '../../context/cartContext';
 import './SingleProduct.css';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
-const SingleProduct = ({ id, Price }) => {
-  const { addToCart } = useContext(CartContext);
+const SingleProduct = ({ id, Price}) => {
+  const { addToCart, cartItems } = useContext(CartContext);
   const [product, setProduct] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [maxQuantity, setMaxQuantity] = useState(2);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -25,7 +26,18 @@ const SingleProduct = ({ id, Price }) => {
       }
     };
 
+    const getCount = async() => {
+      try{
+        const res = await getProductCount({productID: id});
+        setMaxQuantity(res.data)
+      } catch(err) {
+        console.log("Error occurred while getting product count:", err)
+      }
+    }
+
     fetchProduct();
+    getCount();
+
   }, [id]);
 
   const handleCloseDialog = () => {
@@ -33,12 +45,13 @@ const SingleProduct = ({ id, Price }) => {
   };
 
   const handleAddToCart = () => {
-    const cartItem = {
+    const cartitem = {
       ...product,
       quantity: quantity, 
-      price: Price * quantity,
+      price: Price,
     };
-    addToCart(cartItem);
+    addToCart(cartitem);
+    console.log(cartItems)
     setOpenSnackbar(true);
   };
 
@@ -90,7 +103,7 @@ const SingleProduct = ({ id, Price }) => {
               }
             </p>
             <p>
-              Quantity:<input type='number' min='1' value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
+              Quantity:<input type='number' min='1' max={maxQuantity} value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
             </p>
             <button onClick={handleAddToCart}>Add to Cart</button>
           </div>

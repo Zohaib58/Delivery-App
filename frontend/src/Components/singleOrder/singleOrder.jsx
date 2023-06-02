@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Button} from "@mui/material";
-import { GetAOrder } from '../../util/orderApi';
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Button} from "@mui/material";
+import { GetAOrder, CancelOrder } from '../../util/orderApi';
 import './Orderstyles.css'
 
 const SingleOrder = ({orderID}) => {
@@ -12,21 +12,30 @@ const SingleOrder = ({orderID}) => {
         setShowDialog(true);
         const fetchOrder = async ({orderId}) => {
             const res = await GetAOrder({id: orderId});
-            setOrder(res.data.orderWithAllInfo[0]);
-            if(order.status === "Confirmed" || order.status === "In Process"){
-                setOrderCancel(true)
-            }
+            setOrder(res.data.orderWithAllInfo[0])
         }
 
         fetchOrder({orderId: orderID});
     }, [orderID]);
 
+    useEffect( () => {
+        if(order.status === "Confirmed" || order.status === "In Process"){
+            setOrderCancel(true)
+        }
+        else if(order){
+            setOrderCancel(false)
+        }
+    }, [order])
+
     const handleCloseDialog = () => {
         setShowDialog(false);
     };
 
-    const CancelOrder = ({orderID}) => {
-
+    const handleCancelOrder = async () => {
+        const res = await CancelOrder({id: order.orderId});
+        if (res.data.success === true) {
+            setOrderCancel(false)
+        }
     }
 
     return(
@@ -42,10 +51,9 @@ const SingleOrder = ({orderID}) => {
                         <p><strong>Status:</strong> {order.status}</p>
                         {
                             orderCancellable ? (
-                                <Button variant="outlined" color="error" onClick={() => CancelOrder(order.orderId)}>
+                                <Button variant="outlined" color="error" onClick={handleCancelOrder}>
                                     Cancel order
                                 </Button>
-                                
                             ) : (
                                 <Button disabled>Cancel Order</Button>
                             )

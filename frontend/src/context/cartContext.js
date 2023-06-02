@@ -11,10 +11,6 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const printCart = () => {
-    console.log(cartItems)
-  }
-
   const addToCart = (product) => {
     let prev_index=-1 ;
     for(let i = 0; i<cartItems.length; i++){
@@ -49,7 +45,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, updateCart, removeItem, clearCart, printCart
+    <CartContext.Provider value={{ cartItems, addToCart, updateCart, removeItem, clearCart
      }}>
       {children}
     </CartContext.Provider>

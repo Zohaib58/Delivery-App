@@ -1,13 +1,13 @@
 import "./styles.css"
 export const ActionButton= ({buttonName})=>{
     return (
-            <button className="actionButton">{buttonName}</button>
+        <button className="actionButton">{buttonName}</button>
     );
 }
 
 export const LinkButton= ({buttonName, props, text})=>{
     return (
-            <button className="linkButton" onClick={()=>props.onFormSwitch(text)}>{buttonName}</button>
+        <button className="linkButton" onClick={()=>props.onFormSwitch(text)}>{buttonName}</button>
     );
 }
 

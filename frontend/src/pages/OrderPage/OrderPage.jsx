@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {GetOrders, GetAOrder} from '../../util/orderApi'
+import {GetOrders} from '../../util/orderApi'
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper} from "@mui/material";
 import { SingleOrder } from "../../Components/singleOrder/singleOrder";
 
@@ -21,7 +21,7 @@ const DisplayOrders = () =>{
         fetchorders();
     },[])
 
-    const handleOrderDisplay = async({orderId})=> {
+    const handleOrderDisplay = async(orderId)=> {
         setOrder(orderId);
     }
 
@@ -43,13 +43,14 @@ const DisplayOrders = () =>{
                         <TableBody>
                             {
                                 orders.map((row) => (
-                                    <TableRow 
-                                        key={row.orderId} 
-                                        sx= {{'&:last-child td, &:last-child th' : { border: 0}}}
+                                    <TableRow
+                                        key={row.orderId}
+                                        onClick={() => handleOrderDisplay(row.orderId)}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        style={{ cursor: 'pointer' }}
                                     >
                                         <TableCell align="center">
-                                            <button id={row.orderId} onClick={()=>handleOrderDisplay({orderId: row.orderId})}>{row.orderId}
-                                            </button>
+                                            {row.orderId}
                                         </TableCell>
                                         <TableCell>{row.orderDate}</TableCell>
                                         <TableCell>{row.status}</TableCell>

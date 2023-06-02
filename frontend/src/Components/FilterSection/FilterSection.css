@@ -1,37 +1,37 @@
 .filter-section {
-    margin: 1rem;
-  }
+  margin: 1rem;
+}
   
-  .category-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .category-list li {
-    margin-bottom: 0.25rem;
-  }
-  
-  .button {
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: #fff; 
-    border: none;
-    cursor: pointer;
-    outline: none;
-    display: block; 
-    width: 100%;
-    text-align: center; 
-    margin-bottom: 0.25rem; 
-  }
+.category-list {
+  list-style-type: none;
+  padding: 0;
+}
 
-  h2{
-    text-align: center;
-  }
-  
-  .button.active {
-    background-color: #0056b3;
-  }
+.category-list li {
+  margin-bottom: 0.25rem;
+}
 
-  ul{
-    list-style-type:none;
-  }
+.button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff; 
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: block; 
+  width: 100%;
+  text-align: center; 
+  margin-bottom: 0.25rem; 
+}
+
+h2{
+  text-align: center;
+}
+
+.button.active {
+  background-color: #0056b3;
+}
+
+ul{
+  list-style-type:none;
+}

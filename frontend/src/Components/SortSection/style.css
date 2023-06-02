@@ -1,0 +1,9 @@
+.sort-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px; /* Optional: Add some spacing below the buttons */
+  }
+  
+  .sort-section button {
+    margin: 0 5px; /* Optional: Add some spacing between the buttons */
+  }

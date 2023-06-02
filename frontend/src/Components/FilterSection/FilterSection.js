@@ -5,7 +5,6 @@ import './FilterSection.css';
 
 const FilterSection = () => {
   const [selectedCategory, setSelectedCategory] = useContext(CategoryContext);
-  localStorage.setItem('category', selectedCategory);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {

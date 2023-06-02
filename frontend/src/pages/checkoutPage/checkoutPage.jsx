@@ -17,8 +17,8 @@ const CheckoutPage = () => {
     const updatedQuantityArray = [...quantityArray];
     const quantity = parseInt(e.target.value);
     if (quantity <= 0) {
-      e.target.value = 2;
-      updatedQuantityArray[index] = 2;
+      e.target.value = 1;
+      updatedQuantityArray[index] = 1;
       setQuantityArray(updatedQuantityArray);
     } else {
       updatedQuantityArray[index] = parseInt(e.target.value);
@@ -59,11 +59,11 @@ const CheckoutPage = () => {
               <h3>{item.name}</h3>
               <p>
                 Quantity:{' '}
-                <input type="number" defaultValue={quantityArray[index]} onChange={(e) => handleQuantityChange(e, index)} style={{ width: '50px' }} min={1}/>
+                <input type="number" defaultValue={quantityArray[index]} min={1} onChange={(e) => handleQuantityChange(e, index)} style={{ width: '50px' }}/>
               </p>
             </div>
             <div style={{ flex: '1' }}>
-              <p>Price: PKR {item.price * quantityArray[index]}</p>
+              <p>Price: PKR {(item.price * quantityArray[index])}</p>
             </div>
             <div>
               <button onClick={()=>handleRemoveItem(index)}>Delete</button>
