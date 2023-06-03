@@ -8,7 +8,7 @@ import DoneIcon from '../../assets/icons/done.svg';
 import CancelIcon from '../../assets/icons/cancel.svg';
 import RefundedIcon from '../../assets/icons/refunded.svg';
 
-import FetchDataComponent from '../../data/fetchData';
+import FetchDataComponent from '../../components/ReadData/fetchData';
 console.log(FetchDataComponent('vapi/orders/'));
 
 
