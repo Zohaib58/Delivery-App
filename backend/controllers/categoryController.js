@@ -1,5 +1,6 @@
 const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
+const Customer = require('../models/customerModel')
 
 const addCategory = async(req, res) => {
     const superAdminID = req.user.id
@@ -27,7 +28,7 @@ const addCategory = async(req, res) => {
 }
 
 const deleteCategory = async(req, res) => {
-    const superAdminID = req.user.id
+    const superAdminID = req.user._id
 
     const check = await superAdmin.findById(superAdminID)
 
@@ -41,10 +42,11 @@ const deleteCategory = async(req, res) => {
 }
 
 const getAllCategory = async(req, res) => {
-    const superAdminID = req.user.id
-    const check = await superAdmin.findById(superAdminID)
+    const userID = req.user._id
+    //const check = await superAdmin.findById(userID)
+    const check2 = await Customer.findById(userID)
 
-    if(check){
+    if(check2){
         const categories = await Category.find()
         res.json(categories)
     }

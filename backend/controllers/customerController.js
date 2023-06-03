@@ -40,32 +40,27 @@ const getCustomers = asyncHandler(async (req, res) => {
 })
 
 const updateCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
-
+    const customer = await Customer.findById(req.user._id);
+  
     if (!customer) {
-        res.status(404)
-        throw new Error('Customer not found')
+      res.status(404);
+      throw new Error('Customer not found');
     }
-
-    const user = await User.findById(req.user.id)
-
-    if (!user) {
-        res.status(404)
-        throw new Error('User not found')
+  
+    // Check if the logged-in user is authorized to update the customer
+    if (customer._id !== req.user._id) {
+      res.status(401);
+      throw new Error('User not authorized');
     }
-
-    if (customer.userId.toString() !== req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
-
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-    )
-    res.status(200).json(updatedCustomer)
-})
+  
+    // Update the customer with the provided data
+    customer.name = req.body.name || customer.name;
+    customer.phoneNo = req.body.phoneNo || customer.phoneNo;
+    customer.address = req.body.address || customer.address;
+  
+    const updatedCustomer = await customer.save();
+    res.status(200).json(updatedCustomer);
+  });
 
 const deleteCustomer = asyncHandler(async (req, res) => {
     const customer = await Customer.findById(req.params.id)
