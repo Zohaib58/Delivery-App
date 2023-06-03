@@ -192,13 +192,8 @@ const browseProducts = async(req, res) => {
               res.json(productsWithPrice);
         }
     } catch(err) {
-        res.json({
-            success:false,
-            error: err.message
-        })
+        res.json(err.message)
     }
-        
-    
 }
 
 //customer views a specific product by clicking on it
@@ -209,10 +204,7 @@ const getProduct = async(req, res) => {
         product.vendor = vendor.companyName
         res.status(200).json(product)
     }catch(err){
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -225,12 +217,9 @@ const searchProduct = async(req, res) => {
             {discription: {$regex : req.body.keyword, $options: "i"}},
         ]});
 
-        res.status(200).json({ products })
+        res.status(200).json(products)
     }catch(err){
-        res.json({
-            success: false,
-            error: err.message
-        })}
+        res.json(err.message)}
 }
 
 const toggleFav = async(req, res)=>{
@@ -269,10 +258,7 @@ const toggleFav = async(req, res)=>{
             res.json("Product added to your favorites.");
         }
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -337,16 +323,35 @@ const viewFav = async(req, res)=>{
         }
 
         if(favProducts.length>0){
-            res.status(200).json({favProducts})
+            res.status(200).json(favProducts)
         }
         else {
             res.status(404).json("No favorite products");
         }
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
+    }
+}
+
+
+const getVendorProducts = async(req, res) => {
+    try{
+        const vendorId = req.user._id
+        const products = await Product.find({vendor: vendorId})
+        
+        if (products.length > 0)
+        {
+            res.status(200).json(products)
+        }
+        else{
+            res.status(404).json("No products found")
+        }
+
+
+    }
+    catch(err)
+    {
+        res.json(err.message)
     }
 }
 
@@ -357,5 +362,6 @@ module.exports = {
     toggleFav,
     viewFav,
     getQuantity,
-    getQFn
+    getQFn,
+    getVendorProducts
 }
