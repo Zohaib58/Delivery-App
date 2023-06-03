@@ -3,10 +3,17 @@ const mongoose = require('mongoose')
 const productSchema = mongoose.Schema
 (
     {
-        //productId will be ._id
+        _id: {
+            type: String
+        },
         name: {
             type: String,
             required: [true, "Enter name"]
+        },
+        vendor:{
+            type: String,
+            required: [true, "Enter Vendor ID"],
+            ref: 'Vendor'
         },
         description: {
             type: String,
@@ -18,9 +25,12 @@ const productSchema = mongoose.Schema
         status: {
             type: mongoose.Schema.Types.Number,
             default: 0,
-
             ref: 'StatusEnum',
-
+        },
+        category:{
+            type: mongoose.Schema.Types.Number,
+            required: true,
+            ref: 'Category'
         }
     },
     {

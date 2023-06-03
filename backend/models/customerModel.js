@@ -4,12 +4,8 @@ const PaymentEnum = require('../enum/paymentEnum');
 const customerSchema = mongoose.Schema
 (
     {
-        customerId: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            unique: true,
-            ref: "User"
-        },
+        //customerId will be ._id
+        _id: { type: String },
         name: {
             type: String,
             required: [true, "Enter name"]
@@ -29,7 +25,7 @@ const customerSchema = mongoose.Schema
         favourites: [
             {
                 productId: {
-                    type: mongoose.Schema.Types.ObjectId,
+                    type: mongoose.Schema.Types.String,
                     ref: "Product"
                 }
             }

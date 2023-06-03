@@ -5,49 +5,26 @@ const Customer = require('../models/customerModel')
 
 
 const createCustomer = asyncHandler(async (req, res) => {
-    const {name, phoneNo, orders,  status, address, favourites} = req.body
-
-    if (!name || !phoneNo || !orders || !status || !address || !favourites) {
+    const { name ,phoneNo,  status, address, favourites} = req.body
+    
+    if (!name || !phoneNo || !address || !favourites) {
         res.status(400)
         throw new Error('Please add all fields')
     }
-    console.log(name)
-    console.log(phoneNo)
-    console.log(orders)
-    console.log(status)
-    console.log(address)
-    console.log(favourites)
 
-    //const customerExists = await Customer.findOne({ userId })
-/*
-    if (customerExists) {
-        res.status(400)
-        throw new Error('Customer already exists')
-    }
-*/
-    console.log('helloUpper')
-    console.log(req.user.id)
-    console.log('hello')
-    // Create Customer
     const customer = await Customer.create({
         _id: req.user.id,
         name, 
-        phoneNo, 
-        orders,  
+        phoneNo,   
         status, 
         address, 
         favourites,
     })
-
-    console.log('hello')
-    console.log(req.user.id)
     
     if (customer) {
         res.status(201).json({
-            //_id: req.user.id,
             name: customer.name,
             phoneNo: customer.phoneNo,
-            orders: customer.orders,
             status: customer.status,
             address: customer.address,
             favourites: customer.favourites,
@@ -59,47 +36,70 @@ const createCustomer = asyncHandler(async (req, res) => {
 })
 
 const getCustomers = asyncHandler(async (req, res) => {
-    const customers = await Customer.find({ _id: req.user.id })
+    const customers = await Customer.find({ _id: req.user._id })
     res.status(200).json(customers)
 })
 
-const updateCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
-
-    if (!customer) {
-        res.status(404)
-        throw new Error('Customer not found')
+const getAllCustomers = asyncHandler(async (req, res) => {
+    try {
+      //console.log("helloFromTheOTherSide");
+      const customers = await Customer.find();
+      res.status(200).json(customers);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
     }
+  });
+  
 
-    const user = await User.findById(req.user.id)
+  const updateCustomer = asyncHandler(async (req, res) => {
+  const customer = await Customer.findById(req.user._id);
 
-    if (!user) {
-        res.status(404)
-        throw new Error('User not found')
-    }
+  //console.log('hello')
+  //console.log(customer)
 
-    if (customer.userId.toString() !== req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
+  if (!customer) {
+    res.status(404);
+    throw new Error('Customer not found');
+  }
 
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-    )
-    res.status(200).json(updatedCustomer)
-})
+  // Check if the logged-in user is authorized to update the customer
+  if (customer._id !== req.user._id) {
+    res.status(401);
+    throw new Error('User not authorized');
+  }
+  
+  // Create an object with the updated fields
+  const updatedFields = {
+    name: req.body.name || customer.name,
+    phoneNo: req.body.phoneNo || customer.phoneNo,
+    address: req.body.address || customer.address,
+  };
+
+  console.log(updatedFields);
+  // Update the customer using the create command
+  
+  let updatedCustomer;
+    // Update the customer using the create command
+    updatedCustomer = await Customer.findByIdAndUpdate(
+      req.user._id,
+      updatedFields,
+      { new: true }
+    );
+
+  res.status(200).json(updatedCustomer);
+});
+
+  
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.body.id)
 
     if (!customer) {
         res.status(404)
         throw new Error('Customer not found')
     }
 
-    if (customer.userId.toString() !== req.user.id) {
+    if (customer._id !== req.user._id) {
         res.status(401)
         throw new Error('User not authorized')
     }
@@ -113,4 +113,5 @@ module.exports = {
     updateCustomer,
     getCustomers,
     deleteCustomer,
+    getAllCustomers,
 }

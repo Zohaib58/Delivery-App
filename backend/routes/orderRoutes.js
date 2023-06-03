@@ -4,14 +4,14 @@ const {protect} = require('../middleware/authMiddleware')
 
 const {createOrder,
     viewOrders,
-    viewOrder} = require('../controllers/orderController')
+    viewOrder,
+    cancelOrder} = require('../controllers/orderController')
 
 
 router.post('/createOrder',protect, createOrder);
 router.get('/', protect, viewOrders);
-router.get('/order', protect, viewOrder);
+router.get('/order/:orderId', protect, viewOrder);
+router.patch('/cancelorder', protect, cancelOrder)
 
-/*router.post('/createOrder', createOrder)
-router.get('/', viewOrders)
-router.get('/order', viewOrder)*/
+
 module.exports= router

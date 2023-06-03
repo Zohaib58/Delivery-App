@@ -3,7 +3,10 @@ const mongoose = require('mongoose')
 const userSchema = mongoose.Schema
 (
     {
-        //userId will be ._id
+        _id: {
+            type: String,
+        },
+        _id: { type: String },
         email: {
             type: String,
             required: [true, "Enter email"],
@@ -16,7 +19,6 @@ const userSchema = mongoose.Schema
         role: {
             type: mongoose.Schema.Types.Number,
             required: [true, "Enter your role"],
-
             ref: 'roleEnum',
 
         },

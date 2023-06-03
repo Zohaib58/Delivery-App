@@ -6,13 +6,14 @@ const roleEnumSchema = mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      enum: [0, 1, 2, 3, 4] 
+      enum: [0, 1, 2, 3], 
+      default: 0
     },
     roleDescription: {
       type: String,
       required: true,
       unique: true,
-      enum: ["Vendor", "Customer", "Delivery Perosnal", "Admin", "Super Admin"] 
+      enum: ["Customer", "Vendor", "Delivery Personal", "Super Admin"] 
     }
   },
   {

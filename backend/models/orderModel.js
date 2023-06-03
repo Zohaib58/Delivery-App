@@ -3,36 +3,21 @@ const mongoose = require('mongoose')
 const orderSchema = mongoose.Schema
 (
     {
-        //orderId will be ._id
+        _id:{
+            type:String
+        },
         customerId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
-            ref: 'Customer'
+            ref: 'User'
         },
-        vendorId: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: 'Vendor'
-        },
-        products: [
+        subOrders: [
             {
-                ProductID: {
+                subOrderID: {
                 type: mongoose.Schema.Types.ObjectId,
                 required: true, 
-                ref: 'Product',
-                },
-                Quantity: {
-                    type: Number,
-                    default: 1,
+                ref: 'SubOrder',
                 }
-            }
-        ],
-        deals: [
-            {
-                dealId: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Product',
-                },
             }
         ],
         address: {
@@ -51,9 +36,7 @@ const orderSchema = mongoose.Schema
         status: {
             type: mongoose.Schema.Types.Number,
             default: 0,
-
             ref: 'orderEnum'
-
         },
         date: {
             type: Date,

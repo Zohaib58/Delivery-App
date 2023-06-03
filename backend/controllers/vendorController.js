@@ -7,22 +7,22 @@ const Vendor = require('../models/vendorModel')
 const createVendor = asyncHandler(async(req, res) => {
     const {companyName, website, status} = req.body
 
-    if (!companyName || !website || !status) {
+    if (!companyName || !website) {
         res.status(400)
         throw new Error('Please add all fields')
     } 
 
-    const vendorExists = await Vendor.findOne({companyName})
+    const vendorExists = await Vendor.findOne({companyName:companyName})
 
     if(vendorExists) {
         res.status(400)
         throw new Error('Vendor already exists')
     }
 
-    
+    //console.log("reached")
     //Create Vendor
     const vendor = await Vendor.create ({
-       _id: req.user.id, companyName, website, status
+       _id: req.user.id, companyName:companyName, website: website, status: status
     })
 
     if (vendor) {
@@ -31,7 +31,6 @@ const createVendor = asyncHandler(async(req, res) => {
             companyName: vendor.companyName,
             website: vendor.website,
             status: vendor.status,
-            token: generateToken(_id),
         })
     }
     else {
@@ -43,63 +42,67 @@ const createVendor = asyncHandler(async(req, res) => {
 
 
 const getVendors = asyncHandler (async(req, res) => {
-    const vendors = await Vendor.find({ userId: req.user.id })
+    const vendors = await Vendor.find({ _id: req.user._id })
 
     res.status(200).json(vendors)
 })
 
 const updateVendor = asyncHandler (async(req, res) => {
-    const vendor = await Vendor.findById(req.params.id)
+    const vendor = await Vendor.findById(req.user._id );
 
-    if(!vendor) {
-        res.status(400)
-        throw new Error('Vendor not found')
-    } 
+  //console.log('hello')
+  //console.log(customer)
 
-    const user = await User.findById(req.user.id)
+  if (!vendor) {
+    res.status(404);
+    throw new Error('vendor not found');
+  }
+  console.log(vendor._id)
+  console.log(req.user._id)
 
-    //check for user
-    if(!user) {
-        res.status(401)
-        throw new Error('User not found')
-    }
+  // Check if the logged-in user is authorized to update the customer
+  if (vendor._id !== req.user._id) {
+    res.status(401);
+    throw new Error('User not authorized');
+  }
+  
+  // Create an object with the updated fields
+  const updatedFields = {
+    companyName: req.body.companyName || vendor.companyName,
+    website: req.body.website || vendor.website,
+  };
 
-    //Make sure the logged in user matches the goal user
-    if(vendor.userId.toString() != req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
+  //console.log(updatedFields);
+  // Update the customer using the create command
+  
+  let updatedCustomer;
+    // Update the customer using the create command
+    updatedCustomer = await Vendor.findByIdAndUpdate(
+        req.user._id ,
+      updatedFields,
+      { new: true }
+    );
 
-    const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-    })
-    res.status(200).json(updatedGoal)
-})
+  res.status(200).json(updatedCustomer);
+});
 
 
 const deleteVendor = asyncHandler (async(req, res) => {
-    const vendor = await Vendor.findById(req.params.id)
+    const vendor = await Vendor.findById(req.body.id)
 
     if(!vendor) {
         res.status(400)
         throw new Error('Vendor not found')
     } 
 
-
-    //check for user
-    if(!req.user) {
-        res.status(401)
-        throw new Error('User not found')
-    }
-
     //Make sure the logged in user matches the vendor user
-    if(vendor.user.toString() != user.id) {
+    if(vendor._id != user._id) {
         res.status(401)
         throw new Error('User not authorized')
     }
 
     await vendor.remove()
-    res.status(200).json({ id: req.params.id })
+    res.status(200).json({ id: req.body.id })
 })
 
 

@@ -8,11 +8,6 @@ const adminSchema = mongoose.Schema
             required: [true, "Enter User ID"],
             ref: 'User'
         },
-        vendorId: {
-            type: Number,
-            required: [true, "Enter Vendor ID"],
-            ref: 'Vendor'
-        },
         createdOn: {
             type: Date,
             required: [false, "Enter date"],
