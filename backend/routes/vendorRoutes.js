@@ -5,9 +5,9 @@ const {protect} = require('../middleware/authMiddleware')
 const {createVendor, getVendors, updateVendor, deleteVendor} = require('../controllers/vendorController')
 
 router.post('/create',protect, createVendor)
-router.get('/get', getVendors)
-router.post('/update/:id', updateVendor)
-router.delete('/delete/:id', deleteVendor)
+router.get('/get', protect, getVendors)
+router.put('/update', protect, updateVendor)
+router.delete('/delete', protect, deleteVendor)
 
 
 module.exports = router

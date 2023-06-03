@@ -1,39 +1,43 @@
 const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
 
-const addCategory = async(req, res) => {
-    const superAdminID = req.user._id
-
-    const check = await superAdmin.findById(superAdminID)
-
-    if(check){
-        const numCheck = await Category.find({catNum: req.body.num})
-
-        if(numCheck.length==0){
-            const newCategory = await Category.create({
-                name: req.body.name,
-                catNum: req.body.num,
-            })
-            res.json({
-                success: true,
-                data: "Category created successfully"
-            })
-        }
-        else{
-            res.json({
-                success: false,
-                data: "Number of category set is already assigned to another category"
-            })
-        }
-        
-    }
-    else{
+const addCategory = async (req, res) => {
+    try {
+      const maxCategory = await Category.findOne({}, {}, { sort: { catNum: -1 } });
+  
+      let newCategoryNum = 1;
+  
+      if (maxCategory) {
+        newCategoryNum = maxCategory.catNum + 1;
+      }
+  
+      const existingCategory = await Category.findOne({ name: req.body.name });
+  
+      if (existingCategory) {
+        res.status(400).json({
+          success: false,
+          data: "Category name already exists",
+        });
+      } else {
+        const newCategory = await Category.create({
+          name: req.body.name,
+          catNum: newCategoryNum,
+        });
+  
         res.json({
-            success: false,
-            data: "Unauthorized to perform this action"
-        })
+          success: true,
+          data: "Category created successfully",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        data: "An error occurred while adding the category",
+      });
     }
-}
+  };
+  
+  
 
 const deleteCategory = async(req, res) => {
     const superAdminID = req.user._id
