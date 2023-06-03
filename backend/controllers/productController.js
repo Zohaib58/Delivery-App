@@ -277,16 +277,64 @@ const toggleFav = async(req, res)=>{
 }
 
 const viewFav = async(req, res)=>{
+    const Activestatus = await Status.findOne({statusDescription: "Active"})
     try{
         const user = req.user
 
-        const customer = await Customer.findOne({customerId: user._id});
+        const keyword = req.params.keyword
+
+        const customer = await Customer.findOne({_id: user._id});
 
         const productIds = customer.favourites.map(favourite => favourite.productId);
 
-        const favProducts = await Product.find({
-            _id: { $in: productIds }
-        });
+        let products= [];
+        if(keyword === "AllProduct$") {
+            products = await Product.find({$and: 
+                [
+                    {_id: { $in: productIds }},
+                    {status: Activestatus.statusNum}
+                ]})
+        }
+        else {
+            products = await Product.find({$and: 
+                [
+                    {_id: { $in: productIds }},
+                    {
+                        $or: [
+                            { name: { $regex: req.params.keyword, $options: "i" } },
+                            { description: { $regex: req.params.keyword, $options: "i" } },
+                        ]
+                    },
+                    {status: Activestatus.statusNum}
+                ]}
+            );
+        }
+
+        
+
+        let favProducts = []
+        for (const product of products) {
+            const stock = await Inventory.findOne({ productId: product._id });
+            const category = await Category.findOne({catNum: product.category})
+            const vendorName = await Vendor.findById(stock.vendorId.toString());
+            if(stock) {
+                const newProduct = {
+                    _id: product._id,
+                    name: product.name,
+                    vendor: vendorName.companyName,
+                    description: product.description,
+                    image: product.image,
+                    status: product.status,
+                    category: category.name,
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt,
+                    isFav: true,
+                    price: stock.price
+                }
+                favProducts.push(newProduct)
+            }
+            
+        }
 
         if(favProducts.length>0){
             res.status(200).json({favProducts})
