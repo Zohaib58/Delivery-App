@@ -41,6 +41,7 @@ const viewInventory = async(req, res) => {
 const addProduct = async(req, res) => {
     try{
         const vendor = req.user.id
+
         const categoryCheck = await Category.find({name: req.body.category})
         //console.log(categoryCheck)
         
@@ -70,7 +71,7 @@ const addProduct = async(req, res) => {
                 vendor: vendor,
                 description : req.body.description,
                 image : req.body.image,
-                category: categoryCheck[0].catNum
+                category: categoryCheck.catNum
             })
     
             try{

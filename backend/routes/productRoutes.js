@@ -3,13 +3,15 @@ const router = express.Router()
 const {protect} = require('../middleware/authMiddleware')
 
 const {browseProducts,getProduct,searchProduct,
-    toggleFav,viewFav, getVendorProducts} = require('../controllers/productController')
+    toggleFav,viewFav, getQuantity, getVendorProducts} = require('../controllers/productController')
 
-router.get('/:category',protect, browseProducts)
-router.get('/search',protect, searchProduct)
+
+router.get('/favorites/:keyword', protect, viewFav)
+router.get('/getQuantity/:productID', getQuantity)
 router.get('/product/:id',protect, getProduct)
+router.get('/:category/:keyword',protect, browseProducts)
+router.get('/search',protect, searchProduct)
 router.post('/toggleFav', protect, toggleFav)
-router.get('/favorites', protect, viewFav)
 router.post('/vendorProducts', protect, getVendorProducts)
 
 module.exports = router

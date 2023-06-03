@@ -12,6 +12,6 @@ const {
 router.post('/', protect, createCustomer)
 router.put('/edit/:id', protect, updateCustomer)
 router.delete('/delete/:id', protect, deleteCustomer)
-router.get('/get/:id', protect, getCustomers)
+router.get('/get', protect, getCustomers)
 
 module.exports = router
