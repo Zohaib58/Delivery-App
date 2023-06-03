@@ -14,24 +14,15 @@ const addCategory = async(req, res) => {
                 name: req.body.name,
                 catNum: req.body.num,
             })
-            res.json({
-                success: true,
-                data: "Category created successfully"
-            })
+            res.json("Category created successfully")
         }
         else{
-            res.json({
-                success: false,
-                data: "Number of category set is already assigned to another category"
-            })
+            res.json("Number of category set is already assigned to another category")
         }
         
     }
     else{
-        res.json({
-            success: false,
-            data: "Unauthorized to perform this action"
-        })
+        res.json("Unauthorized to perform this action")
     }
 }
 
@@ -42,16 +33,10 @@ const deleteCategory = async(req, res) => {
 
     if(check){
         const deleteCat = await Category.deleteOne({name: req.body.name})
-        res.json({
-            success: true,
-            data: "Category deleted successfully"
-        })
+        res.json("Category deleted successfully")
     }
     else{
-        res.json({
-            success: false,
-            data: "Unpreviliged access"
-        })
+        res.json("Unpreviliged access")
     }
 }
 
@@ -65,10 +50,8 @@ const getAllCategory = async(req, res) => {
         res.json(categories)
     }
     else{
-        res.json({
-            success: false,
-            data: "Unprrevilleged access"
-        })
+        res.json("Unprevilleged access")
+    
     }
 }
 

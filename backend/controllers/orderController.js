@@ -36,6 +36,7 @@ const createOrder = async(req, res)=>{
             }
             orderCost+=costOfProducts;
             const subOrder = new subOrders({
+              _id: await ID.id(subOrders),
               customerId: user._id,
               vendorId: vendorId,
               products: products,
@@ -44,7 +45,8 @@ const createOrder = async(req, res)=>{
             });
 
             await subOrder.save();
-            subOrderIDs.push({ subOrderID: subOrder._id });
+            
+            
         }
 
 
