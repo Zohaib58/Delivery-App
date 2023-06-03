@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async(req, res) => {
                 _id: user._id,
                 email: user.email,
                 role: user.role,
-                //token: generateToken(user.id),
+                token: generateToken(user.id),
             })
         }
         else {

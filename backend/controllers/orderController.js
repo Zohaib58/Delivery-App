@@ -1,12 +1,19 @@
 const Orders = require('../models/orderModel')
 const subOrders = require('../models/subOrder')
+const Payment = require('../enum/paymentEnum')
+const orderStatus = require('../enum/orderEnum')
 const Vendor = require('../models/vendorModel')
 const Inventory = require('../models/inventoryModel')
 const Product = require('../models/productModel')
+const { Mutex } = require('async-mutex');
+const {getQFn} = require('./productController')
 const ID = require('../id/id')
 
+
 const createOrder = async(req, res)=>{
+    
     try{
+        
         const user = req.user
         let products= req.body.products
 
@@ -32,7 +39,18 @@ const createOrder = async(req, res)=>{
             for (let i = 0; i < products.length; i++) {
               const product = products[i];
               const cost = await Inventory.findOne({productId: product.ProductID});
-              costOfProducts += (cost.price*product.Quantity);
+              const prodcount = await getQFn(product.ProductID)
+              if(prodcount>=product.Quantity){
+                costOfProducts += (cost.price*product.Quantity);
+                product.Price = cost.price
+              }
+              else{
+                res.json({
+                    success: false,
+                    message: `Error occurred. Not enough stock for ${product.ProductID}`
+                })
+                return;
+              }
             }
             orderCost+=costOfProducts;
             const subOrder = new subOrders({
@@ -56,7 +74,7 @@ const createOrder = async(req, res)=>{
             address: req.body.address,
             contact: req.body.contact,
             paymentType: req.body.paymentType,
-            status: req.body.status,
+            status: 0,
             cost: orderCost
         })
 
@@ -78,11 +96,11 @@ const createOrder = async(req, res)=>{
         //         const saveStock = await searchStock.save();
         //     }
         // }
-
         res.status(200).json(savedOrder)
     } catch(err) {
         res.json(err.message)
     }
+
 }
 //customers views his previous orders
 const viewOrders = async(req, res)=>{
@@ -90,24 +108,27 @@ const viewOrders = async(req, res)=>{
         const user = req.user;
 
         const orders = await Orders.find({customerId: user._id})
-
-        const ordersWithProducts = [];
+        const ordersDisplay = [];
 
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
+            const payment = await Payment.findOne({paymentNum: order.paymentType})
+            const orderstatus = await orderStatus.findOne({orderNum: order.status})
+            
+            const date = new Date(order.createdAt).toISOString().substr(0, 10);
             const orderWithMinDetails = {
                 orderId: order._id,
-                orderDate: order.date,
-                paymentType: order.paymentType,
-                status: order.status,
+                orderDate: date,
+                paymentType: payment.paymentDescription,
+                status: orderstatus.orderDescription,
                 cost: order.cost,
             };
-            ordersWithProducts.push(orderWithProducts);
+            ordersDisplay.push(orderWithMinDetails);
         }
 
 
         if(orders.length>0){
-            res.status(200).json(ordersWithProducts)
+            res.status(200).json(ordersDisplay)
         }
         else {
             res.status(200).json("No orders yet.")
@@ -120,38 +141,42 @@ const viewOrders = async(req, res)=>{
 //customer views a specific order
 const viewOrder = async(req, res)=>{
     try{
-        const user = req.user
 
-        const order = await Orders.find({
-            $and: [
-                {customerId: user._id},
-                {orderId: req.body.orderId},
-            ]
-        })
+        const user = req.user
+        const order = await Orders.find({_id: req.params.orderId})
 
         if(order.length==1){
             const orderWithAllInfo = [];
+            const date = new Date(order[0].createdAt).toISOString().substr(0, 10);
+            const payment = await Payment.findOne({paymentNum: order[0].paymentType})
+            const orderstatus = await orderStatus.findOne({orderNum: order[0].status})
             
             const orderWithProducts = {
                 orderId: order[0]._id,
-                orderDate: order[0].orderDate,
+                orderDate: date,
+                paymentType: payment.paymentDescription,
+                amount: order[0].cost,
+                status: orderstatus.orderDescription,
                 subOrders: []
             };
             for (let j = 0; j < order[0].subOrders.length; j++) {
-                const subOrder = order[0].subOrders[j];
-                const products = [];
+                const subOrder = await subOrders.findById(order[0].subOrders[j].subOrderID);
+
+                const products = []
                 for (let k = 0; k < subOrder.products.length; k++) {
                     const product = subOrder.products[k];
-                    const productDetails = await Inventory.findOne(product.productID);
+
+                    const productDetails = await Product.findById(product.ProductID);
+                    const vendor = await Vendor.findById(productDetails.vendor)
                     products.push({
                         name: productDetails.name,
-                        price: productDetails.price,
-                        quantity: product.quantity
+                        price: product.Price,
+                        quantity: product.Quantity,
+                        image: productDetails.image,
+                        vendor: vendor.companyName
                     });
                 }
                 orderWithProducts.subOrders.push({
-                    subOrderId: subOrder._id,
-                    vendorId: subOrder.vendorId,
                     products: products
                 });
             }
@@ -164,6 +189,45 @@ const viewOrder = async(req, res)=>{
         }   
     } catch(err) {
         res.json(err.message)
+    }
+}
+
+const cancelOrder = async(req, res) => {
+    const user = req.user
+    try{
+        const order = await Orders.findById(req.body.orderID)
+        const orderStat = await orderStatus.findOne({orderNum: order.status})
+        if(orderStat) {
+            if (orderStat.orderDescription === "Confirmed" || orderStat.orderDescription === "In Process"){
+                const cancelOrderNum = await orderStatus.findOne({orderDescription: "Cancelled"})
+                order.status = cancelOrderNum.orderNum;
+                await order.save()
+                for (const subOrder of order.subOrders){
+                    const SO = await subOrders.findById(subOrder.subOrderID)
+                    SO.status = cancelOrder.orderNum
+                    await SO.save()
+                }
+                res.json("Order Cancelled")
+            }
+            else{
+                res.json({
+                    success: false,
+                    message: "Order cant be cancelled"
+                })
+            }
+        }
+        else {
+            res.json({
+                success: false,
+                message: "Order cant be accessed"
+            })
+        }
+        
+    } catch (err) {
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 
@@ -208,10 +272,7 @@ const vendorUpdateOrderStatus = async(req, res)=>{
 
         const saveOrder = await order.save();
 
-        res.json({
-            success: true,
-            data: "Order Status updated!"
-        })
+        res.json("Order Status updated!")
     } catch(err) {
         res.json(err.message)
     }
@@ -231,8 +292,7 @@ const dpUpdateOrderStatus = async(req, res)=>{
             res.json("Order Status updated!")
         }
         else {
-            res.json("You dont have access to this order"
-            )
+            res.json("You dont have access to this order")
         }
     } catch(err) {
         res.json(err.message)
@@ -246,10 +306,7 @@ const viewApprovedOrders = async(req,res)=>{
             {status: 1}
         ]})
         
-        res.json({
-            success: true,
-            data: orders
-        })
+        res.json( orders )
 
     }catch(err) {
         res.json(err.message)
@@ -284,6 +341,7 @@ module.exports = {
     createOrder,
     viewOrders,
     viewOrder,
+    cancelOrder,
     getAVendorOrder,
     getVendorOrders,
     vendorUpdateOrderStatus,
