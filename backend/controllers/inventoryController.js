@@ -31,9 +31,15 @@ const viewInventory = async(req, res) => {
         return { pid, productName, discount, quantity, price };
         });
 
-        res.status(200).json(inventoryData)
+        res.status(200).json({
+            success: true,
+            data: inventoryData,
+        })
     } catch(err) {
-        res.json(err.message)
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 
@@ -92,14 +98,24 @@ const addProduct = async(req, res) => {
                     })
                 }
             } catch(err) {
-                res.json(err.message)
+                console.log("reached")
+                res.json({
+                    success: false,
+                    error: err.message
+                })
             }
         }
         else{
-            res.json("The category does not exist yet. Kindly put in a request to admin if its need to be added")
+            res.json({
+                success: false,
+                data: "The category does not exist yet. Kindly put in a request to admin if its need to be added"
+            })
         }
     } catch(err) {
-        res.json(err.message)
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 
@@ -120,18 +136,30 @@ const deleteProduct = async(req, res) => {
                 const removeProduct = await Product.findOne({productId: removeStock.productId})
                 removeProduct.status = 1;
                 const saveChanges = await removeProduct.save();
-                res.json("Product Deleted!")
+                res.json({
+                    success: true,
+                    error: "Product Deleted!"
+                })
             } catch(err) {
-                res.json(err.message)
+                res.json({
+                    success: false,
+                    error: err.message
+                })
             }
         }
         else{
-            res.json("Unauthorized to perform this action")
+            res.json({
+                success: false,
+                data: "Unauthorized to perform this action"
+            })
         }
         
         
     } catch(err) {
-        res.json( err.message)
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 
@@ -140,9 +168,15 @@ const viewProduct = async(req, res) => {
     try {
         const product = await Product.find({_id : req.body.productId});
 
-        res.status(200).json(product)
+        res.status(200).json({
+            succuss: true,
+            data: product,
+        })
     } catch (err) {
-        res.json(err.message)
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 
@@ -173,14 +207,23 @@ const updateProduct = async(req, res) => {
 
                 const savedStock = await stock.save();
             }
-            res.json("Product updated Successfully!");
+            res.json({
+                success: true,
+                data: "Product updated Successfully!"
+            });
         }
         else {
-            res.json("Unauthorized to perform this action")
+            res.json({
+                success: false,
+                data: "Unauthorized to perform this action"
+            })
         }
         
     } catch(err) {
-        res.json(err.message)
+        res.json({
+            success: false,
+            error: err.message
+        })
     }
 }
 

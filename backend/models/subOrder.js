@@ -4,7 +4,6 @@ const subOrderSchema = mongoose.Schema
 (
     {
         //orderId will be ._id
-        __id: { type: String },
         customerId: {
             type: String,
             required: true,
