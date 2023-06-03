@@ -6,8 +6,8 @@ const {createVendor, getVendors, updateVendor, deleteVendor} = require('../contr
 
 router.post('/create',protect, createVendor)
 router.get('/get', protect, getVendors)
-router.post('/update/:id', updateVendor)
-router.delete('/delete/:id', deleteVendor)
+router.put('/update', protect, updateVendor)
+router.delete('/delete', protect, deleteVendor)
 
 
 module.exports = router
