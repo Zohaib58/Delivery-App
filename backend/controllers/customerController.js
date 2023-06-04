@@ -20,6 +20,7 @@ const createCustomer = asyncHandler(async (req, res) => {
         address, 
         favourites,
     })
+    
     if (customer) {
         res.status(201).json({
             name: customer.name,
@@ -35,42 +36,68 @@ const createCustomer = asyncHandler(async (req, res) => {
 })
 
 const getCustomers = asyncHandler(async (req, res) => {
-    const customers = await Customer.findOne({ _id: req.user.id })
+    const customers = await Customer.find({ _id: req.user._id })
     res.status(200).json(customers)
 })
 
-const updateCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.user._id);
-  
-    if (!customer) {
-      res.status(404);
-      throw new Error('Customer not found');
+const getAllCustomers = asyncHandler(async (req, res) => {
+    try {
+      //console.log("helloFromTheOTherSide");
+      const customers = await Customer.find();
+      res.status(200).json(customers);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-  
-    // Check if the logged-in user is authorized to update the customer
-    if (customer._id !== req.user._id) {
-      res.status(401);
-      throw new Error('User not authorized');
-    }
-  
-    // Update the customer with the provided data
-    customer.name = req.body.name || customer.name;
-    customer.phoneNo = req.body.phoneNo || customer.phoneNo;
-    customer.address = req.body.address || customer.address;
-  
-    const updatedCustomer = await customer.save();
-    res.status(200).json(updatedCustomer);
   });
+  
+
+  const updateCustomer = asyncHandler(async (req, res) => {
+  const customer = await Customer.findById(req.user._id);
+
+  //console.log('hello')
+  //console.log(customer)
+
+  if (!customer) {
+    res.status(404);
+    throw new Error('Customer not found');
+  }
+
+  // Check if the logged-in user is authorized to update the customer
+  if (customer._id !== req.user._id) {
+    res.status(401);
+    throw new Error('User not authorized');
+  }
+  
+  // Create an object with the updated fields
+  const updatedFields = {
+    name: req.body.name || customer.name,
+    phoneNo: req.body.phoneNo || customer.phoneNo,
+    address: req.body.address || customer.address,
+  };
+
+  console.log(updatedFields);
+  // Update the customer using the create command
+  
+  let updatedCustomer;
+    // Update the customer using the create command
+    updatedCustomer = await Customer.findByIdAndUpdate(
+      req.user._id,
+      updatedFields,
+      { new: true }
+    );
+
+  res.status(200).json(updatedCustomer);
+});
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.body.id)
 
     if (!customer) {
         res.status(404)
         throw new Error('Customer not found')
     }
 
-    if (customer.userId.toString() !== req.user.id) {
+    if (customer._id !== req.user._id) {
         res.status(401)
         throw new Error('User not authorized')
     }
@@ -84,4 +111,5 @@ module.exports = {
     updateCustomer,
     getCustomers,
     deleteCustomer,
+    getAllCustomers,
 }
