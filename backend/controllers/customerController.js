@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const Customer = require('../models/customerModel')
+const Status = require('../enum/statusEnum')
 
 
 const createCustomer = asyncHandler(async (req, res) => {
@@ -63,20 +64,16 @@ const updateCustomer = asyncHandler(async (req, res) => {
   });
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.user.id)
 
     if (!customer) {
         res.status(404)
         throw new Error('Customer not found')
     }
-
-    if (customer.userId.toString() !== req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
-
-    await customer.remove()
-    res.status(200).json({ id: req.params.id })
+    const activeStatus = await Status.findOne({statusDescription: "Inactive"})
+    customer.status= activeStatus.statusNum;
+    await customer.save()
+    res.status(200).json({ id: req.user.id })
 })
 
 module.exports = {
