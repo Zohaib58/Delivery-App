@@ -89,8 +89,6 @@ const getAllCustomers = asyncHandler(async (req, res) => {
   res.status(200).json(updatedCustomer);
 });
 
-  
-
 const deleteCustomer = asyncHandler(async (req, res) => {
     const customer = await Customer.findById(req.body.id)
 
