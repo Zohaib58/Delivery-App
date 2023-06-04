@@ -54,6 +54,7 @@ const createOrder = async(req, res)=>{
             }
             orderCost+=costOfProducts;
             const subOrder = new subOrders({
+              _id: await ID.id(subOrders),
               customerId: user._id,
               vendorId: vendorId,
               products: products,
@@ -62,7 +63,7 @@ const createOrder = async(req, res)=>{
             });
 
             await subOrder.save();
-            subOrderIDs.push({ subOrderID: subOrder._id });
+            
         }
 
 
@@ -95,13 +96,9 @@ const createOrder = async(req, res)=>{
         //         const saveStock = await searchStock.save();
         //     }
         // }
-
-        res.status(200).json({savedOrder})
+        res.status(200).json(savedOrder)
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 
 }
@@ -131,16 +128,13 @@ const viewOrders = async(req, res)=>{
 
 
         if(orders.length>0){
-            res.status(200).json({ordersDisplay})
+            res.status(200).json(ordersDisplay)
         }
         else {
             res.status(200).json("No orders yet.")
         }
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -188,19 +182,13 @@ const viewOrder = async(req, res)=>{
             }
             orderWithAllInfo.push(orderWithProducts);
 
-            res.status(200).json({orderWithAllInfo})
+            res.status(200).json(orderWithAllInfo)
         }
         else{
-            res.json({
-                success: false,
-                error: "An error while fetching your order has occurred"
-            })
+            res.json("An error while fetching your order has occurred")
         }   
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -250,16 +238,10 @@ const getVendorOrders = async(req, res)=>{
     try{
         const vendorOrders = await subOrders.find({vendorId : vendorId})
 
-        res.json({
-            success: true,
-            data: vendorOrders
-        })
+        res.json(vendorOrders)
 
     }catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -273,12 +255,9 @@ const getAVendorOrder = async(req, res)=>{
             { _id: req.body.orderId}
         ]})
 
-        res.json({ vendorOrder })
+        res.json(vendorOrder)
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -295,10 +274,7 @@ const vendorUpdateOrderStatus = async(req, res)=>{
 
         res.json("Order Status updated!")
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -316,16 +292,10 @@ const dpUpdateOrderStatus = async(req, res)=>{
             res.json("Order Status updated!")
         }
         else {
-            res.json({
-                success: false,
-                error: "Unauthorized access"
-            })
+            res.json("You dont have access to this order")
         }
     } catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -339,10 +309,7 @@ const viewApprovedOrders = async(req,res)=>{
         res.json( orders )
 
     }catch(err) {
-        res.json({
-            success: false,
-            error: err.message
-        })
+        res.json(err.message)
     }
 }
 
@@ -358,19 +325,13 @@ const acceptOrderToDeliver = async(req, res)=>{
             order.status = 2
 
             const saveOrder = await order.save();
-            res.json( "Order Accepted" )
+            res.json("Order Accepted")
         }
         else {
-            res.json({
-                success: false,
-                error: "Order can't be accepted"
-            })
+            res.json("Order can't be accepted")
         }
     } catch(err) {
-        res.json({
-            success: false,
-            data: err.message
-        })
+        res.json(err.message)
     }
 }
 

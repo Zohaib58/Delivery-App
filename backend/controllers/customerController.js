@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const Customer = require('../models/customerModel')
+const Status = require('../enum/statusEnum')
 
 
 const createCustomer = asyncHandler(async (req, res) => {
@@ -20,6 +21,7 @@ const createCustomer = asyncHandler(async (req, res) => {
         address, 
         favourites,
     })
+    
     if (customer) {
         res.status(201).json({
             name: customer.name,
@@ -35,53 +37,70 @@ const createCustomer = asyncHandler(async (req, res) => {
 })
 
 const getCustomers = asyncHandler(async (req, res) => {
-    const customers = await Customer.findOne({ _id: req.user.id })
+    const customers = await Customer.find({ _id: req.user._id })
     res.status(200).json(customers)
 })
 
-const updateCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
-
-    if (!customer) {
-        res.status(404)
-        throw new Error('Customer not found')
+const getAllCustomers = asyncHandler(async (req, res) => {
+    try {
+      //console.log("helloFromTheOTherSide");
+      const customers = await Customer.find();
+      res.status(200).json(customers);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
     }
+  });
+  
 
-    const user = await User.findById(req.user.id)
+  const updateCustomer = asyncHandler(async (req, res) => {
+  const customer = await Customer.findById(req.user._id);
 
-    if (!user) {
-        res.status(404)
-        throw new Error('User not found')
-    }
+  //console.log('hello')
+  //console.log(customer)
 
-    if (customer.userId.toString() !== req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
+  if (!customer) {
+    res.status(404);
+    throw new Error('Customer not found');
+  }
 
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-    )
-    res.status(200).json(updatedCustomer)
-})
+  // Check if the logged-in user is authorized to update the customer
+  if (customer._id !== req.user._id) {
+    res.status(401);
+    throw new Error('User not authorized');
+  }
+  
+  // Create an object with the updated fields
+  const updatedFields = {
+    name: req.body.name || customer.name,
+    phoneNo: req.body.phoneNo || customer.phoneNo,
+    address: req.body.address || customer.address,
+  };
+
+  console.log(updatedFields);
+  // Update the customer using the create command
+  
+  let updatedCustomer;
+    // Update the customer using the create command
+    updatedCustomer = await Customer.findByIdAndUpdate(
+      req.user._id,
+      updatedFields,
+      { new: true }
+    );
+
+  res.status(200).json(updatedCustomer);
+});
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.user.id)
 
     if (!customer) {
         res.status(404)
         throw new Error('Customer not found')
     }
-
-    if (customer.userId.toString() !== req.user.id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
-
-    await customer.remove()
-    res.status(200).json({ id: req.params.id })
+    const activeStatus = await Status.findOne({statusDescription: "Inactive"})
+    customer.status= activeStatus.statusNum;
+    await customer.save()
+    res.status(200).json({ id: req.user.id })
 })
 
 module.exports = {
@@ -89,4 +108,5 @@ module.exports = {
     updateCustomer,
     getCustomers,
     deleteCustomer,
+    getAllCustomers,
 }
