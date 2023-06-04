@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Button} from "@mui/material";
-import { GetAOrder, CancelOrder } from '../../util/orderApi';
+import { GetAOrder, CancelOrder } from '../../data/orderApi';
 import './Orderstyles.css'
 
 const SingleOrder = ({orderID}) => {
@@ -12,7 +12,7 @@ const SingleOrder = ({orderID}) => {
         setShowDialog(true);
         const fetchOrder = async ({orderId}) => {
             const res = await GetAOrder({id: orderId});
-            setOrder(res.data.orderWithAllInfo[0])
+            setOrder(res.data[0])
         }
 
         fetchOrder({orderId: orderID});
@@ -33,7 +33,7 @@ const SingleOrder = ({orderID}) => {
 
     const handleCancelOrder = async () => {
         const res = await CancelOrder({id: order.orderId});
-        if (res.data.success === true) {
+        if (res.data === "Order Cancelled") {
             setOrderCancel(false)
         }
     }

@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import { CartContext } from '../../context/cartContext';
-import {GetAddressContact} from '../../util/customerApi'
-import { CreateOrder } from "../../util/orderApi";
+import {GetAddressContact, UpdateAddressContact} from '../../data/customerApi'
+import { CreateOrder } from "../../data/orderApi";
 import { ActionButton } from '../../Components/Buttons/mui-Buttons';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import './orderstyles.css'
 
 const OrderDetails = () => {
-    const { cartItems} = useContext(CartContext);
+    const {cartItems} = useContext(CartContext);
     const [phoneNo, setContact] = useState(0);
     const [address, setAddress] = useState('');
     const [paymentType, setPaymentType]= useState(0);
@@ -46,9 +46,7 @@ const OrderDetails = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            console.log("here")
             const res= await CreateOrder({products, address, contact: phoneNo, paymentType:paymentType})
-            console.log(res)
             if(res.data.success === false){
                 setOpenSnackbar(true);
                 setQuantityError(res.data.message);
@@ -63,6 +61,21 @@ const OrderDetails = () => {
             console.error(err);
         }
 
+    }
+
+    const handleUpdateInfo = async() => {
+        try{
+            const res = await UpdateAddressContact({address: address, contact: phoneNo});
+            if(res.status === 200) {
+                setContact(res.data.phoneNo);
+                setAddress(res.data.address);
+            }
+            else{
+                console.error(res.error)
+            }
+        } catch (err) {
+            console.error(err.message)
+        }
     }
   
       return(
@@ -94,9 +107,9 @@ const OrderDetails = () => {
                         </div>
                         <div className="buttons">
                             <ActionButton buttonName={'Confirm Order'}/>
-                            <button className="replace-address-button">Replace Address/Contact</button>
                         </div>
                     </form>
+                    <button className="replace-address-button" onClick={handleUpdateInfo}>Replace Address/Contact</button>
                 </div>
                 <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                     {

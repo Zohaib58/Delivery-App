@@ -1,35 +1,51 @@
-import { useContext } from 'react'
-import React from 'react'
-import { SortingContext } from '../../context/SortingContext'
-import './style.css'
+import React, { useContext, useState } from 'react';
+import { SortingContext } from '../../context/SortingContext';
+import './style.css';
 
 const SortSection = () => {
-  const [setSortCriteria] = useContext(SortingContext)
+  const [alphaSortCriteria, setAlphaSortCriteria] = useContext(SortingContext);
+  const [priceSortCriteria, setPriceSortCriteria]= useContext(SortingContext);
+  const [selectedAlphaButton, setSelectedAlphaButton] = useState(null);
+  const [selectedPriceButton, setSelectedPriceButton] = useState(null);
 
-  const handleAscendingAlpha = () => {
-    setSortCriteria("A - Z")
-  }
+  const handleAlphaSortCriteriaChange = (criteria) => {
+    setAlphaSortCriteria(criteria);
+    setSelectedAlphaButton(criteria);
+  };
 
-  const handleDescendingAlpha = () => {
-    setSortCriteria("Z - A")
-  }
-
-  const handleAscendingPrice = () => {
-    setSortCriteria("Low - High")
-  }
-
-  const handleDescendingPrice = () => {
-    setSortCriteria("High - Low")
-  }
+  const handlePriceSortCriteriaChange = (criteria) => {
+    setPriceSortCriteria(criteria);
+    setSelectedPriceButton(criteria);
+  };
 
   return (
-    <div className='sort-section'>
-      <button onClick={handleAscendingAlpha}>A-Z</button>
-      <button onClick={handleDescendingAlpha}>Z-A</button>
-      <button onClick={handleDescendingPrice}>High - Low</button>
-      <button onClick={handleAscendingPrice}>Low - High</button>
+    <div className="sort-section">
+      <button
+        onClick={() => handleAlphaSortCriteriaChange('A - Z')}
+        className={selectedAlphaButton === 'A - Z' ? 'alphaselected' : ''}
+      >
+        A-Z
+      </button>
+      <button
+        onClick={() => handleAlphaSortCriteriaChange('Z - A')}
+        className={selectedAlphaButton === 'Z - A' ? 'alphaselected' : ''}
+      >
+        Z-A
+      </button>
+      <button
+        onClick={() => handlePriceSortCriteriaChange('High - Low')}
+        className={selectedPriceButton === 'High - Low' ? 'pselected' : ''}
+      >
+        High - Low
+      </button>
+      <button
+        onClick={() => handlePriceSortCriteriaChange('Low - High')}
+        className={selectedPriceButton === 'Low - High' ? 'pselected' : ''}
+      >
+        Low - High
+      </button>
     </div>
-  )
-}
+  );
+};
 
-export default SortSection
+export default SortSection;

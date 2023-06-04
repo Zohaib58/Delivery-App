@@ -1,10 +1,10 @@
 import React from 'react'
-import {Login} from '../Components/Login'
+import {Login} from './Login'
 import { Register } from '../Components/Register';
 import {useState} from 'react';
 
 export default function HomePage() {
-  const [DisplayForm, setDisplayForm] = useState('Login');
+    const [DisplayForm, setDisplayForm] = useState('Login');
 
   const toggleForm = (formName) => {
     setDisplayForm(formName);

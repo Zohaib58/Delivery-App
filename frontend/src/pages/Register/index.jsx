@@ -13,6 +13,7 @@ export const Register = (props) => {
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [isValidPass, setIsValidPass] = useState(true);
     const [passCheck, setPassCheck] = useState(true);
+    const status = 1;
   
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,7 +44,8 @@ export const Register = (props) => {
             await CustomerPost({
                 customerId: response1.data._id,
                 name: name, 
-                phoneNo: phoneNo,    
+                phoneNo: phoneNo,   
+                status: status, 
                 address: address, 
             })
             window.location.assign('/');

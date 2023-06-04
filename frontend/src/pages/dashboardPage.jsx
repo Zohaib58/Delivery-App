@@ -9,12 +9,15 @@ import ProductList from '../Components/ProductList/ProductList.jsx';
 import { CategoryContext } from '../context/categoryContext';
 import { CartProvider } from '../context/cartContext';
 import { SortingContext } from '../context/SortingContext';
+import { LogoutFunc } from '../data/userApi';
 
 const DashboardPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchKeyword, setSearchKeyword] = useState('AllProduct$');
   const [inputValue, setInputValue] = useState('');
-  const [sortCriteria, setSortCriteria] = useState([])
+  const [alphaSortCriteria, setAlphaSortCriteria] = useState('A - Z')
+  const [priceSortCriteria, setPriceSortCriteria] =useState('Low - High')
+  const [dropDown, setDropDown] = useState(false)
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value.trim())
@@ -32,18 +35,37 @@ const DashboardPage = () => {
     window.location.assign('/user/check-out')
   }
 
+  const toggleDropdown = () => {
+    setDropDown(!dropDown);
+  }
+
+  const handleLogout = async() => {
+    const res = await LogoutFunc();
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    window.location.assign('/')
+  }
+
   return (
     <>
       <header className="header-container">
         <input type="text" className="search-bar" placeholder="Search using keywords..." onChange={handleInputChange}/>
         <button className='search-button' onClick={handleSearch}><FontAwesomeIcon icon={faSearch} /></button>
-        <button className="header-orders-button" onClick={()=>window.location.assign('/user/orders')}>My Orders</button>
         <button className='CheckOut' onClick={handleCheckout}><FontAwesomeIcon icon={faShoppingCart} /></button>
-        <button className="header-logout-button">Log Out</button>
-      </header>
+        <button className="dropdown-toggle" onClick={toggleDropdown}>
+        Menu
+        </button>
+        </header>
       <div className="dashboardPage-container">
+      {dropDown && (
+              <div className='dropdown-list'>
+                <button className='profile-button' onClick={()=>window.location.assign('/user/profile')}>Profile</button>
+                <button className="orders-button" onClick={()=>window.location.assign('/user/orders')}>Orders</button>
+                <button className='logout-button' onClick={handleLogout}>Logout</button>
+              </div>
+        )}
       <CategoryContext.Provider value={[selectedCategory, setSelectedCategory]}>
-        <SortingContext.Provider value={[sortCriteria, setSortCriteria]}>
+        <SortingContext.Provider value={[alphaSortCriteria, setAlphaSortCriteria, priceSortCriteria, setPriceSortCriteria]}>
           <CartProvider>
               <div className="column1">
                 <div>

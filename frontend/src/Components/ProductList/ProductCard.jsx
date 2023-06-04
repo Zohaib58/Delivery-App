@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { toggleFav } from '../../util/ProductAPIs';
+import { toggleFav } from '../../data/ProductAPIs';
 import './card.css';
 
 const Product = ({ curProduct, onClick }) => {

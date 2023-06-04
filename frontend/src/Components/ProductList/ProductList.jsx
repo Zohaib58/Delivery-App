@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { GetAllProducts } from '../../util/ProductAPIs';
+import { GetAllProducts, GetFav } from '../../data/ProductAPIs';
 import { CategoryContext } from '../../context/categoryContext';
 import Product from './ProductCard';
 import './ProductList.css';
@@ -10,34 +10,52 @@ const ProductList = ({searchKeyword}) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [ selectedCategory ] = useContext(CategoryContext);
-  const [sortCriteria] = useContext(SortingContext)
-  const [toggleProp, setToggleProp] = useState(true)
+  const [alphaSortCriteria, priceSortCriteria] = useContext(SortingContext)
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await GetAllProducts({ category: selectedCategory, keyword:searchKeyword });
-        const data = res.data;
-        if(sortCriteria === "A - Z"){
-          data.sort((a,b)=>a.name.localeCompare(b.name))
-        }
-        else if(sortCriteria === "Z - A"){
-          data.sort((a,b)=>b.name.localeCompare(a.name))
-        }
-        else if(sortCriteria === "High - Low"){
-          data.sort((a,b)=>b.price-a.price)
+        if(selectedCategory === "Favourites"){
+          const res = await GetFav({keyword: searchKeyword});
+          const data = res.data;
+          if (alphaSortCriteria === "A - Z") {
+            data.sort((a,b)=>a.name.localeCompare(b.name))
+          }
+          else{
+            data.sort((a,b)=>b.name.localeCompare(a.name))
+          }
+          if (priceSortCriteria === "High - Low") {
+            data.sort((a,b)=>b.price-a.price)
+          }
+          else {
+            data.sort((a,b)=>a.price-b.price)
+          }
+          setProducts(data);
         }
         else{
-          data.sort((a,b)=>a.price-b.price)
+          const res = await GetAllProducts({ category: selectedCategory, keyword:searchKeyword });
+          const data = res.data;
+          if (alphaSortCriteria === "A - Z") {
+            data.sort((a,b)=>a.name.localeCompare(b.name))
+          }
+          else{
+            data.sort((a,b)=>b.name.localeCompare(a.name))
+          }
+          if (priceSortCriteria === "High - Low") {
+            data.sort((a,b)=>b.price-a.price)
+          }
+          else {
+            data.sort((a,b)=>a.price-b.price)
+          }
+          setProducts(data);
         }
-        setProducts(data);
       } catch (error) {
         console.log('Error occurred while fetching data:', error);
       }
     };
 
     fetchProducts();
-  }, [selectedCategory, searchKeyword, sortCriteria]); 
+  }, [selectedCategory, searchKeyword, alphaSortCriteria, priceSortCriteria]); 
 
   return (
     <div className="product-list">
@@ -47,7 +65,7 @@ const ProductList = ({searchKeyword}) => {
         })
       }
       {selectedProduct && (
-        <SingleProduct id={selectedProduct._id} Price={selectedProduct.price} Switch={toggleProp}/>
+        <SingleProduct id={selectedProduct._id} Price={selectedProduct.price}/>
       )}
     </div>
   );

@@ -12,6 +12,7 @@ export const Login = (props) => {
         
         try{
             const response = await LoginFunc({email: email, password: pass});
+            console.log(response)
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('userId', response.data.id)
             if(response.data.role === 1){
@@ -23,7 +24,7 @@ export const Login = (props) => {
             else if(response.data.role === 2){
                 window.location.assign('/DP/dashboard');
             }
-            else{
+            else if(response.data.role === 3){
                 window.location.assign('/SA/dashboard');
             }
             localStorage.removeItem('cartItems')

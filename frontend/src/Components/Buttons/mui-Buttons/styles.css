@@ -1,4 +1,4 @@
-button{
+.linkButton, .actionButton{
   border: none;
   background-color: whitesmoke;
   border-radius: 10px;

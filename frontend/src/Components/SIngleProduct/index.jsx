@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { GetAProduct, getProductCount } from '../../util/ProductAPIs';
+import { GetAProduct, getProductCount } from '../../data/ProductAPIs';
 import { CartContext } from '../../context/cartContext';
 import './SingleProduct.css';
 import Alert from '@mui/material/Alert';
@@ -51,7 +51,6 @@ const SingleProduct = ({ id, Price}) => {
       price: Price,
     };
     addToCart(cartitem);
-    console.log(cartItems)
     setOpenSnackbar(true);
   };
 
