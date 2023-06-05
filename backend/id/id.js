@@ -6,8 +6,8 @@ const id = async(collection) => {
         return collection.modelName[0].toUpperCase() + '1';
       }
       else{
-        const oldId = doc._id;
-        const num = parseInt(oldId.slice(1)) + 1;
+        const oldId = String(doc._id);
+        const num = parseInt((oldId).slice(1)) + 1;
         return oldId[0] + num;
       }  
     } catch (err) {

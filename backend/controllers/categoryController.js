@@ -3,27 +3,29 @@ const superAdmin = require('../models/adminModel')
 const Customer = require('../models/customerModel')
 
 const addCategory = async(req, res) => {
-    const superAdminID = req.user.id
+    const superAdminID = req.user.id;
 
-    const check = await superAdmin.findById(superAdminID)
+    const check = await superAdmin.findById(superAdminID);
 
-    if(check){
-        const numCheck = await Category.find({catNum: req.body.num})
+    if (check) {
+        const lastCategory = await Category.findOne({ createdAt: { $exists: true } }, {}, { sort: { createdAt: -1 } });
 
-        if(numCheck.length==0){
+        if(lastCategory) {
             const newCategory = await Category.create({
                 name: req.body.name,
-                catNum: req.body.num,
-            })
-            res.json("Category created successfully")
+                catNum: lastCategory.catNum + 1,
+            });
         }
-        else{
-            res.json("Number of category set is already assigned to another category")
+        else {
+            const newCategory = await Category.create({
+                name: req.body.name,
+                catNum: 0,
+            });
         }
-        
-    }
-    else{
-        res.json("Unauthorized to perform this action")
+
+        res.json("Category created successfully");
+    } else {
+        res.json("Unauthorized to perform this action");
     }
 }
 
