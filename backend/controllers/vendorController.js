@@ -26,12 +26,12 @@ const createVendor = asyncHandler(async(req, res) => {
     })
 
     if (vendor) {
-        res.status(201).json({
-            _id: req.user.id,
-            companyName: vendor.companyName,
-            website: vendor.website,
-            status: vendor.status,
-        })
+        res.status(201).json(
+            req.user.id,
+            vendor.companyName,
+            vendor.website,
+            vendor.status,
+        )
     }
     else {
         res.status(400)
@@ -42,7 +42,7 @@ const createVendor = asyncHandler(async(req, res) => {
 
 
 const getVendors = asyncHandler (async(req, res) => {
-    const vendors = await Vendor.find({ _id: req.user._id })
+    const vendors = await Vendor.find( _id = req.user._id )
 
     res.status(200).json(vendors)
 })

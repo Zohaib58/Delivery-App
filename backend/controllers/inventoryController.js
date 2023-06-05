@@ -6,6 +6,27 @@ const Vendor = require('../models/vendorModel')
 const ID = require('../id/id')
 
 //vendor views their product stock
+const getVendorProducts = async(req, res) => {
+    try{
+        const vendorId = req.user._id
+        const products = await Product.find({vendor: vendorId})
+        
+        if (products.length > 0)
+        {
+            res.status(200).json(products)
+        }
+        else{
+            res.status(404).json("No products found")
+        }
+
+
+    }
+    catch(err)
+    {
+        res.json(err.message)
+    }
+}
+
 const viewInventory = async(req, res) => {
     try{
         const userID = req.user.userID
@@ -188,4 +209,5 @@ module.exports = {
     deleteProduct,
     viewProduct,
     updateProduct,
+    getVendorProducts,
 }
