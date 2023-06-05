@@ -28,7 +28,7 @@ const addCategory = async(req, res) => {
 }
 
 const deleteCategory = async(req, res) => {
-    const superAdminID = req.user._id
+    const superAdminID = req.user.id
 
     const check = await superAdmin.findById(superAdminID)
 
