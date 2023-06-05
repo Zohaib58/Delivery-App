@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const ID = require('../id/id')
+const tokenBlacklist = require('../models/tokenBlacklist')
 
 const registerUser = asyncHandler(async(req, res) => {
     const {email,  password, role} = req.body
-   //
 
     if (!email || !password) {
         res.status(400)
@@ -24,23 +24,20 @@ const registerUser = asyncHandler(async(req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        //const defaultRole = 1;
-        console.log(role);
         //Create User
         const user = await User.create ({
             _id: await ID.id(User),
-            email, 
+            email,
             role,
             password: hashedPassword,
         })
         
         if (user) {
             res.status(201).json({
-                _id: user._id,            
+                _id: user._id,
                 email: user.email,
-                //role: role,
                 role: user.role,
-                //token: generateToken(user.id),
+                token: generateToken(user.id),
             })
         }
         else {
@@ -52,13 +49,9 @@ const registerUser = asyncHandler(async(req, res) => {
 
 const loginUser = asyncHandler(async(req, res) => {
     const {email, password} =  req.body
-    console.log(email)
-    console.log(password)
 
     //Check for user email
     const user = await User.findOne({email})
-
-    console.log(user);
     
     if(user && (await bcrypt.compare(password, user.password))){
         res.json({
@@ -73,22 +66,45 @@ const loginUser = asyncHandler(async(req, res) => {
         res.status(400)
         throw new Error('Invalid credentials')
     }
+
+
+})
+
+const logoutUser = asyncHandler(async(req, res) => {
+    const token = req.headers.authorization.split(' ')[1] // bearer token
+
+    //Create User
+    
+    const tokenRevoked = await tokenBlacklist.create ({
+        token
+    })
+    
+    if (tokenRevoked) {
+        res.status(200).json({
+            message: "Logged out successfully"
+        })
+    }
+    else {
+        res.status(400)
+        throw new Error('Invalid user data')
+    }
+
 })
 
 const getMe = asyncHandler(async(req, res) => {
-    const { _id, role, email } = await User.findById(req.user.id)
+    const { _id, name, role, email } = await User.findById(req.user.id)
 
     res.status(200).json({
         id: _id,
+        name,
         email,
         role,
     })
 })
 
-
 //Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, {
         expiresIn: '30d',
     })
 }
@@ -98,5 +114,6 @@ const generateToken = (id) => {
 module.exports = {
     registerUser,
     loginUser,
-    getMe
+    logoutUser,
+    getMe,
 }

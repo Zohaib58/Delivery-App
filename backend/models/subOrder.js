@@ -4,6 +4,7 @@ const subOrderSchema = mongoose.Schema
 (
     {
         //orderId will be ._id
+        _id: {String},
         customerId: {
             type: String,
             required: true,
@@ -24,6 +25,9 @@ const subOrderSchema = mongoose.Schema
                 Quantity: {
                     type: Number,
                     default: 1,
+                },
+                Price: {
+                    type: Number,
                 }
             }
         ],

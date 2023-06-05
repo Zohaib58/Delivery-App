@@ -1,67 +1,47 @@
 const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
 
-const addCategory = async (req, res) => {
-    try {
-      const maxCategory = await Category.findOne({}, {}, { sort: { catNum: -1 } });
-  
-      let newCategoryNum = 1;
-  
-      if (maxCategory) {
-        newCategoryNum = maxCategory.catNum + 1;
-      }
-  
-      const existingCategory = await Category.findOne({ name: req.body.name });
-  
-      if (existingCategory) {
-        res.status(400).json({
-          success: false,
-          data: "Category name already exists",
-        });
-      } else {
-        const newCategory = await Category.create({
-          name: req.body.name,
-          catNum: newCategoryNum,
-        });
-  
-        res.json({
-          success: true,
-          data: "Category created successfully",
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        data: "An error occurred while adding the category",
-      });
+const addCategory = async(req, res) => {
+    const superAdminID = req.user.id
+
+    const check = await superAdmin.findById(superAdminID)
+
+    if(check){
+        const numCheck = await Category.find({catNum: req.body.num})
+
+        if(numCheck.length==0){
+            const newCategory = await Category.create({
+                name: req.body.name,
+                catNum: req.body.num,
+            })
+            res.json("Category created successfully")
+        }
+        else{
+            res.json("Number of category set is already assigned to another category")
+        }
+        
     }
-  };
-  
-  
+    else{
+        res.json("Unauthorized to perform this action")
+    }
+}
 
 const deleteCategory = async(req, res) => {
-    const superAdminID = req.user._id
+    const superAdminID = req.user.id
 
     const check = await superAdmin.findById(superAdminID)
 
     if(check){
         const deleteCat = await Category.deleteOne({name: req.body.name})
-        res.json({
-            success: true,
-            data: "Category deleted successfully"
-        })
+        res.json("Category deleted successfully")
     }
     else{
-        res.json({
-            success: false,
-            data: "Unpreviliged access"
-        })
+        res.json("Unpreviliged access")
     }
 }
 
 const getAllCategory = async(req, res) => {
-    const superAdminID = req.user._id
-
+    const superAdminID = req.user.id
     const check = await superAdmin.findById(superAdminID)
 
     if(check){
@@ -69,10 +49,7 @@ const getAllCategory = async(req, res) => {
         res.json(categories)
     }
     else{
-        res.json({
-            success: false,
-            data: "Unprrevilleged access"
-        })
+        res.json("Unprrevilleged access")
     }
 }
 

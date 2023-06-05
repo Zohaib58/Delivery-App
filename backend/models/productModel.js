@@ -3,8 +3,9 @@ const mongoose = require('mongoose')
 const productSchema = mongoose.Schema
 (
     {
-        //productId will be ._id
-        _id: { type: String },
+        _id: {
+            type: String
+        },
         name: {
             type: String,
             required: [true, "Enter name"]
@@ -29,7 +30,7 @@ const productSchema = mongoose.Schema
         category:{
             type: mongoose.Schema.Types.Number,
             required: true,
-            ref: 'category'
+            ref: 'Category'
         }
     },
     {
