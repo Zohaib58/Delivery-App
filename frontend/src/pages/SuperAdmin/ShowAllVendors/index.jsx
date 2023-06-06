@@ -12,10 +12,8 @@ import RefundedIcon from '../../../assets/icons/refunded.svg';
 
 import FetchDataComponent from '../../../components/ReadData/fetchData';
 
-console.log(FetchDataComponent('vapi/orders/'));
 
-
-function Orders() {
+function AllVendors() {
     const [search, setSearch] = useState('');
     const [orders, setOrders] = useState([]);
     const [page, setPage] = useState(1);
@@ -24,7 +22,7 @@ function Orders() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const result = await FetchDataComponent('vapi/orders/');
+                const result = await FetchDataComponent('sapi/getAllVendor/all');
                 console.log(result)
                 setOrders(result);
                 setPagination(calculateRange(result, 5));
@@ -35,7 +33,8 @@ function Orders() {
         };
 
         fetchData();
-    }, [page]);
+    }, []);
+    //console.log('here its coming')
 
     const __handleSearch = (event) => {
         const value = event.target.value;
@@ -63,7 +62,7 @@ function Orders() {
         setOrders(sliceData(orders, newPage, 5));
     };
 
-
+    console.log(orders)
     return (
 
         <div className='dashboard-container'>
@@ -91,11 +90,10 @@ function Orders() {
                         <table>
                             <thead>
                                 <th>ID</th>
-                                <th>DATE</th>
+                                <th>DATE AND TIME</th>
                                 <th>STATUS</th>
-                                <th>Customer</th>
-                                <th>PRODUCT</th>
-                                <th>Cost</th>
+                                <th>COMPANY NAME</th>
+                                <th>WEBSITE</th>
                             </thead>
 
                             {orders.length !== 0 ?
@@ -128,11 +126,10 @@ function Orders() {
                                             <td>
                                                 <div>
 
-                                                    <span>{order.customerId}</span>
+                                                    <span>{order.companyName}</span>
                                                 </div>
                                             </td>
-                                            <td><span>{order.product}</span></td>
-                                            <td><span>${order.cost}</span></td>
+                                            <td><span>{order.website}</span></td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -169,4 +166,4 @@ function Orders() {
     )
 }
 
-export default Orders;
+export default AllVendors;

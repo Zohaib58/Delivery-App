@@ -4,13 +4,14 @@ import { Routes, Route } from 'react-router-dom';
 import Orders from '../pages/vendor/Orders';
 import RegisterVendor from '../pages/SuperAdmin/VendorC';
 import Category from '../pages/SuperAdmin/AddCategory';
+import AllVendors from '../pages/SuperAdmin/ShowAllVendors';
 import UpdateUser from '../pages/SuperAdmin/EditProfileUser';
 import Products from '../pages/vendor/Products';
 import CreateProduct from '../pages/vendor/Products/createProduct';
 import Account from '../pages/vendor/Account';
 import HomePage from '../pages/homePage';
 import Dashboard from '../pages/vendor/Dashboard';
-
+import SADashboard from '../pages/SuperAdmin/Dashboard';
 function AppRoutes() {
   return (
     <Routes>
@@ -19,8 +20,11 @@ function AppRoutes() {
       <Route exact path="/" element={<HomePage />} />
 
       {/*Super Admin*/}
+      <Route exact path="/sapi/dashboard" element={<SADashboard />} />
       <Route exact path="/sapi/addCategory" element={<Category />} />
       <Route exact path="/sapi/registerVendor" element={<RegisterVendor />} />
+      <Route exact path="/sapi/registerVendor" element={<RegisterVendor />} />
+      <Route exact path="/sapi/ShowAllVendor" element={<AllVendors />} />
 
       
       {/*Vendor*/}
