@@ -7,25 +7,25 @@ const sidebar_menu = [
     {
         id: 1,
         icon: DashboardIcon,
-        path: '/',
+        path: '/vapi/dashboard',
         title: 'Dashboard',
     },
     {
         id: 2,
         icon: ProductIcon,
-        path: '/orders',
+        path: '/vapi/orders',
         title: 'Orders',
     },
     {
         id: 3,
         icon: ShippingIcon,
-        path: '/products',
+        path: '/vapi/products',
         title: 'Products',
     },
     {
         id: 4,
         icon: UserIcon,
-        path: '/profile',
+        path: '/vapi/profile',
         title: 'My account',
     }
 ]

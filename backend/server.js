@@ -36,9 +36,10 @@ app.use('/api/deals', require('./routes/dealRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/customer', require('./routes/customerRoutes'))
 
-app.use('/sapi/categories', require('./routes/categoryRoutes'))
-app.use('/sapi/vendors', require("./routes/vendorRoutes"))
+app.use('/sapi/getAllVendor', require('./routes/getAllVendors'))
 
+app.use('/sapi/categories', require('./routes/categoryRoutes'))
+app.use('/vapi/vendors', require('./routes/vendorRoutes'))
 
 
 app.use(errorHandler)
