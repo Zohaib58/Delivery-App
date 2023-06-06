@@ -1,30 +1,36 @@
 const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
-
-const addCategory = async(req, res) => {
-    const superAdminID = req.user.id
-
-    const check = await superAdmin.findById(superAdminID)
-
-    if(check){
-        const numCheck = await Category.find({catNum: req.body.num})
-
-        if(numCheck.length==0){
-            const newCategory = await Category.create({
-                name: req.body.name,
-                catNum: req.body.num,
-            })
-            res.json("Category created successfully")
+const User = require('../models/userModel')
+const addCategory = async (req, res) => {
+    const superAdminID = req.user._id;
+  
+    try {
+      const check = await User.findById(superAdminID);
+  
+      if (check) {
+        const maxCatNumCategory = await Category.findOne({}, {}, { sort: { catNum: -1 } });
+  
+        let newCatNum = 1;
+        if (maxCatNumCategory) {
+          newCatNum = maxCatNumCategory.catNum + 1;
         }
-        else{
-            res.json("Number of category set is already assigned to another category")
-        }
-        
+  
+        const newCategory = await Category.create({
+          name: req.body.name,
+          catNum: newCatNum,
+        });
+  
+        res.json("Category created successfully");
+      } else {
+        res.json("Unauthorized to perform this action");
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json("An error occurred");
     }
-    else{
-        res.json("Unauthorized to perform this action")
-    }
-}
+  };
+  
+  
 
 const deleteCategory = async(req, res) => {
     const superAdminID = req.user.id
