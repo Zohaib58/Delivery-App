@@ -6,33 +6,9 @@ const Vendor = require('../models/vendorModel')
 const ID = require('../id/id')
 
 //vendor views their product stock
-const getVendorProducts = async(req, res) => {
-    try{
-        const vendorId = req.user._id
-        const products = await Product.find({vendor: vendorId})
-        
-        if (products.length > 0)
-        {
-            res.status(200).json(products)
-        }
-        else{
-            res.status(404).json("No products found")
-        }
-
-
-    }
-    catch(err)
-    {
-        res.json(err.message)
-    }
-}
-
 const viewInventory = async(req, res) => {
     try{
-        const userID = req.user.userID
-
-        const vendorRec = await Vendor.findById(userID)
-        const vendor = vendorRec.vendorId
+        const vendor = req.user._id
 
         const inventoryView = await Inventory.find({
             $and: [
@@ -57,14 +33,12 @@ const viewInventory = async(req, res) => {
         res.json(err.message)
     }
 }
-
 //vendor adds new product
 const addProduct = async(req, res) => {
     try{
         const vendor = req.user.id
 
-        const categoryCheck = await Category.find({name: req.body.category})
-        //console.log(categoryCheck)
+        const categoryCheck = await Category.findOne({name: req.body.category})
         
         const id = async(collection) => {
             try {
@@ -84,7 +58,7 @@ const addProduct = async(req, res) => {
             }
           }
 
-        if(categoryCheck.length==1){
+        if(categoryCheck){
             
             const newProduct = new Product({
                 _id: vendor + await id(Product),
@@ -125,18 +99,14 @@ const addProduct = async(req, res) => {
 //vendor deletes their product
 const deleteProduct = async(req, res) => {
     try{
-        const userID = req.user.userID
-
-        const vendorRec = await Vendor.findById(userID)
-        const vendor = vendorRec.vendorId
+        const vendor = req.user._id
 
 
-        const Stock = await Inventory.findOne({productId: req.body.productId})
+        const Stock = await Inventory.findOne({productId: req.params.productId})
 
         if(Stock.vendorId === vendor) {
             try{
-                const removeStock = await Inventory.findOne({productId: req.body.productId})
-                const removeProduct = await Product.findOne({productId: removeStock.productId})
+                const removeProduct = await Product.findOne({_id: removeStock.productId})
                 removeProduct.status = 1;
                 const saveChanges = await removeProduct.save();
                 res.json("Product Deleted!")
@@ -157,7 +127,7 @@ const deleteProduct = async(req, res) => {
 //vendor views a specific product
 const viewProduct = async(req, res) => {
     try {
-        const product = await Product.find({_id : req.body.productId});
+        const product = await Product.find({_id : req.params.productId});
 
         res.status(200).json(product)
     } catch (err) {
@@ -168,19 +138,19 @@ const viewProduct = async(req, res) => {
 //vendor updates product and its stock
 const updateProduct = async(req, res) => {
     try{
-        const userID = req.user.userID
-
-        const vendorRec = await Vendor.findById(userID)
-        const vendor = vendorRec.vendorId
+        const vendor = req.user._id
 
         const product = await Product.findById(req.body.productId)
-        const productStock = await Inventory.find({productId: product._id})
+        const productStock = await Inventory.findOne({productId: product._id})
+        console.log(productStock.vendorId)
+
+        const category = await Category.findOne({name: req.body.category})
 
         if(vendor === productStock.vendorId){
             product.name = req.body.name;
             product.description = req.body.description;
             product.image = req.body.image;
-            product.category = req.body.category
+            product.category = category.catNum
             const savedProduct = await product.save();
 
             
@@ -209,5 +179,4 @@ module.exports = {
     deleteProduct,
     viewProduct,
     updateProduct,
-    getVendorProducts,
 }

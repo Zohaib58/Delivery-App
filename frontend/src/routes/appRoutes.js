@@ -11,6 +11,7 @@ import Account from '../pages/vendor/Account';
 import HomePage from '../pages/homePage';
 import Dashboard from '../pages/vendor/Dashboard';
 import SADashboard from '../pages/SuperAdmin/Dashboard';
+import UpdateProduct from '../pages/vendor/Products/updateProduct';
 function AppRoutes() {
   return (
     <Routes>
@@ -29,6 +30,7 @@ function AppRoutes() {
       <Route exact path="/vapi/orders" element={<Orders />} />
       <Route exact path="/vapi/products" element={<Products />}/>
       <Route exact path="/vapi/products/createProduct" element={<CreateProduct />} />
+      <Route exact path="/vapi/products/updateProduct" element={<UpdateProduct />} />
       <Route exact path="/vapi/profile" element={<Account />} />
 
 
