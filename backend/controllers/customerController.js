@@ -76,7 +76,6 @@ const getAllCustomers = asyncHandler(async (req, res) => {
     address: req.body.address || customer.address,
   };
 
-  console.log(updatedFields);
   // Update the customer using the create command
   
   let updatedCustomer;

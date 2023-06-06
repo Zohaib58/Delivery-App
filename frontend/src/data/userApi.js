@@ -31,7 +31,6 @@ const CustomerPost = async({customerId, name, phoneNo, address}) => {
 }
 
 const LogoutFunc = async() => {
-    console.log("here")
     const token = localStorage.getItem('token');
     const res = await AxiosBase.post('/api/users/logout',{}, {
         headers: {

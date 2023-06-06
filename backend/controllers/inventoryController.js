@@ -4,8 +4,30 @@ const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const Vendor = require('../models/vendorModel')
 const ID = require('../id/id')
+const Size = require('../enum/sizeEnum')
 
 //vendor views their product stock
+const getVendorProducts = async(req, res) => {
+    try{
+        const vendorId = req.user._id
+        const products = await Product.find({vendor: vendorId})
+        
+        if (products.length > 0)
+        {
+            res.status(200).json(products)
+        }
+        else{
+            res.status(404).json("No products found")
+        }
+
+
+    }
+    catch(err)
+    {
+        res.json(err.message)
+    }
+}
+
 const viewInventory = async(req, res) => {
     try{
         const vendor = req.user._id
@@ -34,13 +56,13 @@ const viewInventory = async(req, res) => {
         res.json(err.message)
     }
 }
-
 //vendor adds new product
 const addProduct = async(req, res) => {
     try{
         const vendor = req.user.id
 
         const categoryCheck = await Category.findOne({name: req.body.category})
+        const size = await Size.findOne({sizeDescription: req.body.size})
 
         if(categoryCheck){
             
@@ -51,7 +73,8 @@ const addProduct = async(req, res) => {
                 description : req.body.description,
                 image : req.body.image,
                 category: categoryCheck.catNum,
-                status: req.body.status
+                status: req.body.status,
+                size: size.sizeNum,
             })
             try{
                 const svProduct = await newProduct.save();
@@ -83,9 +106,7 @@ const deleteProduct = async(req, res) => {
         const vendor = req.user._id
 
 
-        const Stock = await Inventory.findOne({productId: req.body.productId})
-        console.log(req.body.productId)
-        console.log(Stock)
+        const Stock = await Inventory.findOne({productId: req.params.productId})
 
         if(Stock.vendorId === vendor) {
             try{
@@ -111,8 +132,21 @@ const deleteProduct = async(req, res) => {
 const viewProduct = async(req, res) => {
     try {
         const product = await Product.find({_id : req.params.productId});
+        const category = await Category.findOne({catNum: product[0].category})
+        const size = await Size.findOne({sizenum: product[0].size})
 
-        res.status(200).json(product)
+        const returnProduct = [{
+            _id: product[0]._id,
+            name: product[0].name,
+            vendor: product[0].vendor,
+            description: product[0].description,
+            image: product[0].image,
+            status: product[0].status,
+            category: category.name,
+            size: size.sizeDescription,
+        }]
+
+        res.status(200).json(returnProduct)
     } catch (err) {
         res.json(err.message)
     }
@@ -133,17 +167,15 @@ const updateProduct = async(req, res) => {
             product.description = req.body.description;
             product.image = req.body.image;
             product.category = category.catNum
-            const savedProduct = await product.save();
 
             
-            if(productStock.length>0){
-                const stock = productStock[0];
-                stock.discount = req.body.discount;
-                stock.price = req.body.price;
-                stock.quantity = req.body.quantity;
+            const savedProduct = await product.save();
 
-                const savedStock = await stock.save();
-            }
+            productStock.discount = req.body.discount;
+            productStock.price = req.body.price;
+            productStock.quantity = req.body.quantity;
+
+            const savedStock = await productStock.save();
             res.json("Product updated Successfully!");
         }
         else {
@@ -161,4 +193,5 @@ module.exports = {
     deleteProduct,
     viewProduct,
     updateProduct,
+    getVendorProducts,
 }

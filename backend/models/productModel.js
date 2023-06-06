@@ -31,6 +31,11 @@ const productSchema = mongoose.Schema
             type: mongoose.Schema.Types.Number,
             required: true,
             ref: 'Category'
+        },
+        size:{
+            type: mongoose.Schema.Types.Number,
+            required: true,
+            ref: 'SizeEnum'
         }
     },
     {

@@ -15,6 +15,7 @@ function CreateProduct() {
     const [discount, setDiscount] = useState(0);
     const [quantity, setQuantity] = useState(0);
     const [price, setPrice] = useState(0);
+    const [size , setSize] = useState(0);
   
     const handleProductNameChange = (event) => {
       setProductName(event.target.value);
@@ -55,9 +56,10 @@ function CreateProduct() {
         discount: discount,
         quantity: quantity,
         price: price,
+        size: size
 
       }
-      addData('vapi/inventory/addProduct', data);
+      console.log(addData('vapi/inventory/addProduct', data));
       setProductName('');
       setDescription('');
       setImage('');
@@ -65,6 +67,7 @@ function CreateProduct() {
       setPrice('');
       setDiscount('');
       setQuantity('');
+      setSize('');
     };
   
  
@@ -116,6 +119,24 @@ function CreateProduct() {
             <label>Price:</label>
             <input type="number" value={price} onChange={(e) => setPrice(parseInt(e.target.value))} />
           </div>
+
+          <div className="row1">
+                                <label>Size:</label>
+                                <div className="radio-group">
+                                    <div className="radio">
+                                        <input type="radio" id="smallsize" name="sizeType" value="Small" checked={size === "Small"} onChange={(e) => setSize("Small")} />
+                                        <label htmlFor="cod">Small</label>
+                                    </div>
+                                    <div className="radio">
+                                        <input type="radio" id="medsize" name="sizeType" value="Medium" checked={size === "Medium"} onChange={(e) => setSize("Medium")} />
+                                        <label htmlFor="medsize">Medium</label>
+                                    </div>
+                                    <div className="radio">
+                                        <input type="radio" id="largesize" name="sizeType" value="Large" checked={size === "Large"} onChange={(e) => setSize("Large")} />
+                                        <label htmlFor="largesize">Large</label>
+                                    </div>
+                                </div>
+                            </div>
 
           <button type="submit">Submit</button>
         </form>

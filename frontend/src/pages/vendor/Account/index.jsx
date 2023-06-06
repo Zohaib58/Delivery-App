@@ -3,25 +3,32 @@ import DashboardHeader from '../../../components/DashboardHeader';
 import SideBar from '../../../components/Sidebar';
 import sidebar_menu from '../../../constants/sidebar-menu';
 //import account from '../../data/accounts.js';
+import FetchDataComponent from '../../../components/ReadData/fetchData';
 import '../../styles.css';
-let account = [1,2,3]
-function Orders() {
+
+import {calculateRange, sliceData} from '../../../utils/table-pagination';
+
+
+function ShowProfile() {
   const [data, setData] = useState(null);
 
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await account();
+        const result = await FetchDataComponent('vapi/vendors/get');
+        console.log("hjello")
+        console.log(result)
         setData(result);
       } catch (error) {
         console.log(error);
       }
     };
-
+  
     fetchData();
-    
   }, []);
   
+
   
   return (
     <div className="dashboard-container">
@@ -36,34 +43,34 @@ function Orders() {
           <h2>My Profile</h2>
         </div>
 
-        {data && (
+        
           <>
             <div>
-                <label>Company Name:</label>  {data[0].companyName}
+                <label>Company Name:</label>  
             </div>
 
             <div>
-                <label>Created At:</label> {data[0].createdAt}
+                <label>Created At:</label>
             </div>
 
             <div>
-                <label>Status:</label> {data[0].status}
+                <label>Status:</label>
             </div>
                 
             <div>
-                <label>Updated At:</label> {data[0].updatedAt}
+                <label>Updated At:</label>
             </div>
             
             <div>
-                <label>Website:</label> {data[0].website}
+                <label>Website:</label>
             </div>
             
             <div>
-                <label>ID:</label> {data[0]._id}
+                <label>ID:</label>
             </div>
 
           </>
-        )}
+      
       </div>
     </div>
 
@@ -74,4 +81,4 @@ function Orders() {
       );
 }
 
-export default Orders;
+export default ShowProfile;

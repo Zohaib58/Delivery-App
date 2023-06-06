@@ -14,8 +14,11 @@ import DashboardPage from '../pages/dashboardPage';
 import CheckoutPage from '../pages/checkoutPage/checkoutPage';
 import OrderDetails from '../pages/orderDetailsPage/orderDetail';
 import { DisplayOrders } from '../pages/OrderPage/OrderPage';
+import AllVendors from '../pages/SuperAdmin/ShowAllVendors';
 import {UpdateCustomer} from '../pages/Profile';
 
+import SADashboard from '../pages/SuperAdmin/Dashboard';
+import UpdateProduct from '../pages/vendor/Products/updateProduct';
 function AppRoutes() {
   return (
     <Routes>
@@ -29,8 +32,10 @@ function AppRoutes() {
       <Route exact path="/user/orders" element={<DisplayOrders/>}/>
 
       {/*Super Admin*/}
+      <Route exact path="/sapi/dashboard" element={<SADashboard />} />
       <Route exact path="/sapi/addCategory" element={<Category />} />
       <Route exact path="/sapi/registerVendor" element={<RegisterVendor />} />
+      <Route exact path="/sapi/ShowAllVendor" element={<AllVendors />} />
 
       
       {/*Vendor*/}
@@ -38,6 +43,7 @@ function AppRoutes() {
       <Route exact path="/vapi/orders" element={<Orders />} />
       <Route exact path="/vapi/products" element={<Products />}/>
       <Route exact path="/vapi/products/createProduct" element={<CreateProduct />} />
+      <Route exact path="/vapi/products/updateProduct" element={<UpdateProduct />} />
       <Route exact path="/vapi/profile" element={<Account />} />
 
 

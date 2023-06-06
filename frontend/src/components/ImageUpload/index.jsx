@@ -12,6 +12,7 @@ export const UploadImage = ({onImageUpload}) => {
     const handleImageUpload = () => {
         if (imageUpload) {
         const vendorId = localStorage.getItem('userId');
+        console.log(imageUpload.name)
         const imageRef = ref(storage, `${vendorId}/${imageUpload.name}`);
         uploadBytes(imageRef, imageUpload).then(() => {
             alert('Image uploaded')
@@ -23,7 +24,7 @@ export const UploadImage = ({onImageUpload}) => {
         .catch((error) => {
           console.log(error);
         });
-        return getDownloadURL()
+        return
         }
     };
 

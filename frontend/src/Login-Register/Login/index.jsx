@@ -24,7 +24,7 @@ export const Login = (props) => {
                 window.location.assign('/DP/dashboard');
             }
             else{
-                window.location.assign('/SA/dashboard');
+                window.location.assign('/sapi/dashboard');
             }
             localStorage.removeItem('cartItems')
             return null;
