@@ -13,13 +13,7 @@ const {viewInventory,
 router.get('/', protect, viewInventory)
 router.post('/addProduct', protect, addProduct)
 router.delete('/deleteProduct', protect, deleteProduct)
-router.get('/product',protect, viewProduct)
+router.get('/product/:productId',protect, viewProduct)
 router.patch('/product/editProduct', protect, updateProduct)
-
-/*router.get('/', viewInventory)
-router.post('/addProduct', addProduct)
-router.delete('/deleteProduct', deleteProduct)
-router.get('/product', viewProduct)
-router.patch('/product/editProduct', updateProduct)*/
 
 module.exports = router

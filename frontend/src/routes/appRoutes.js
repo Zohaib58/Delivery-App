@@ -10,13 +10,23 @@ import CreateProduct from '../pages/vendor/Products/createProduct';
 import Account from '../pages/vendor/Account';
 import HomePage from '../pages/homePage';
 import Dashboard from '../pages/vendor/Dashboard';
+import DashboardPage from '../pages/dashboardPage';
+import CheckoutPage from '../pages/checkoutPage/checkoutPage';
+import OrderDetails from '../pages/orderDetailsPage/orderDetail';
+import { DisplayOrders } from '../pages/OrderPage/OrderPage';
+import {UpdateCustomer} from '../pages/Profile';
 
 function AppRoutes() {
   return (
     <Routes>
       <Route path="*" element={<div></div>} />
 
-      <Route exact path="/" element={<HomePage />} />
+      <Route exact path="/" element={<HomePage/>} />
+      <Route exact path="/user/profile" element={<UpdateCustomer/>}/>
+      <Route exact path="/user/dashboard" element={<DashboardPage/>} />
+      <Route exact path='/user/check-out' element={<CheckoutPage/>} />
+      <Route exact path="/user/check-out/confirm-details" element={<OrderDetails/>} />
+      <Route exact path="/user/orders" element={<DisplayOrders/>}/>
 
       {/*Super Admin*/}
       <Route exact path="/sapi/addCategory" element={<Category />} />

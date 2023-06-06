@@ -13,8 +13,6 @@ import RefundedIcon from '../../../assets/icons/refunded.svg';
 
 import FetchDataComponent from '../../../components/ReadData/fetchData';
 
-console.log(FetchDataComponent('vapi/orders/'));
-
 
 function Orders () {
       

@@ -32,6 +32,9 @@ const protect = asyncHandler(async (req, res, next) => {
             else{
                 switch (true) 
             {
+                case req.originalUrl.includes('api/users/logout'):
+                    next()
+                    break
                 case req.originalUrl.includes('/vapi'):
                     if (req.user.role === 1) 
                     {

@@ -1,0 +1,35 @@
+.sort-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.sort-section .button-group {
+  display: flex;
+  align-items: center;
+}
+
+.sort-section button {
+  padding: 8px 8px;
+  width: 130px;
+  margin: 0 5px; /* Adjust the value as per your preference */
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.sort-section button:focus {
+  outline: none;
+}
+
+.sort-section .alphaselected {
+  background-color: rgba(70, 176, 172, 0.8);
+  color: #fff;
+  border-radius: 20px;
+}
+
+.sort-section .pselected {
+  background-color: rgba(70, 176, 172, 0.8);
+  color: #fff;
+  border-radius: 20px;
+}
