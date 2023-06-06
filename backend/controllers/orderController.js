@@ -53,7 +53,7 @@ const createOrder = async(req, res)=>{
               }
             }
             orderCost+=costOfProducts;
-            const subOrder = new subOrders({
+            const subOrder = await new subOrders({
               _id: await ID.id(subOrders),
               customerId: user._id,
               vendorId: vendorId,
@@ -63,13 +63,13 @@ const createOrder = async(req, res)=>{
             });
 
             await subOrder.save();
-            
+            subOrderIDs.push({ subOrderID: subOrder._id });
         }
 
 
-        const order = new Orders({
+        const order = await new Orders({
             _id: await ID.id(Orders),
-            customerId : user.id,
+            customerId : user._id,
             subOrders: subOrderIDs,
             address: req.body.address,
             contact: req.body.contact,
@@ -77,7 +77,6 @@ const createOrder = async(req, res)=>{
             status: 0,
             cost: orderCost
         })
-
         const savedOrder = await order.save();
 
         for( let i = 0; i< products.length; i++){

@@ -5,6 +5,7 @@ const Inventory = require('../models/inventoryModel')
 const Customer = require('../models/customerModel')
 const Vendor = require('../models/vendorModel')
 const Status = require('../enum/statusEnum')
+const Size = require('../enum/sizeEnum')
 const ID = require('../id/id')
 
 const getQFn = async(productID) => {
@@ -202,6 +203,8 @@ const getProduct = async(req, res) => {
         const product = await Product.findById(req.params.id)
         const vendor = await Vendor.findById(product.vendor)
         product.vendor = vendor.companyName
+        const size = await Size.findOne({sizenum: pruoduct.size})
+        product.size = size.sizeDescription
         res.status(200).json(product)
     }catch(err){
         res.json(err.message)

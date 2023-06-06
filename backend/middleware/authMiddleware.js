@@ -32,6 +32,9 @@ const protect = asyncHandler(async (req, res, next) => {
             else{
                 switch (true) 
             {
+                case req.originalUrl.includes('api/users/logout'):
+                    next()
+                    break
                 case req.originalUrl.includes('/vapi'):
                     if (req.user.role === 1) 
                     {
@@ -57,6 +60,22 @@ const protect = asyncHandler(async (req, res, next) => {
                     if (req.user.role === 3)
                     {
                         next()
+                    }
+                    else if(req.originalUrl.includes('/sapi/categories/')){
+                        if(req.user.role === 3 || req.user.role === 0){
+                            next()
+                        }
+                        else{
+                            const errorMessage = 'Not authorized as super admin / customer';
+                            const error = new Error(errorMessage);
+                            error.status = 401;
+                            error.stack = new Error().stack; // Capture the current stack trace
+                        
+                            res.status(error.status).json({
+                            message: errorMessage,
+                            stack: error.stack,
+                            });
+                        }
                     }
                     else {
                         const errorMessage = 'Not authorized as super admin';
