@@ -59,7 +59,7 @@ export const UpdateUser = (props) => {
           name="email"
         />
           <label htmlFor="email">Address</label>
-        <input
+          <input
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           type="address"

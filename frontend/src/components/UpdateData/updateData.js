@@ -6,7 +6,8 @@ export const UpdateDataComponent = async (route, data) => {
       const apiUrl = `${baseUrl}:${port}/${route}`;
       
       const token = localStorage.getItem('token');
-  
+      //console.log(data)
+      console.log(apiUrl)
       const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {

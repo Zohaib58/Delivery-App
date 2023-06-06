@@ -7,9 +7,7 @@ import sidebar_menu from '../../../constants/sidebar-menu'
 import {calculateRange, sliceData} from '../../../utils/table-pagination';
 
 import '../../styles.css';
-import DoneIcon from '../../../assets/icons/done.svg';
-import CancelIcon from '../../../assets/icons/cancel.svg';
-import RefundedIcon from '../../../assets/icons/refunded.svg';
+import UpdateProduct from './updateProduct'
 
 import FetchDataComponent from '../../../components/ReadData/fetchData';
 function ProductsDisplay () {
@@ -21,7 +19,7 @@ function ProductsDisplay () {
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const result = await FetchDataComponent('vapi/inventory/getProducts');
+            const result = await FetchDataComponent('vapi/inventory/');
             console.log("hjello")
             console.log(result)
             setProducts(result);
@@ -60,7 +58,8 @@ function ProductsDisplay () {
     const handleUpdate = (productId) => {
         // Perform the necessary actions when the Update button is clicked
         // You can navigate to the update page or trigger a modal, for example
-        console.log(`Update button clicked for product with ID: ${productId}`);
+        localStorage.setItem('productId', productId);
+        window.location.href = '/vapi/products/updateProduct'; 
       };
       
     return(
@@ -94,11 +93,10 @@ function ProductsDisplay () {
                 <table>
                     <thead>
                         <th>ID</th>
-                        <th>DATE</th>
-                        <th>STATUS</th>
                         <th>NAME</th>
-                        <th>PRODUCT</th>
-                        <th>REVENUE</th>
+                        <th>DISCOUNT</th>
+                        <th>QUANTITY</th>
+                        <th>PRICE</th>
                         <th>ACTIONS</th> {/* Add Actions column */}
                     </thead>
 
@@ -107,43 +105,24 @@ function ProductsDisplay () {
                         <tbody>
                             {products.map((product, index) => (
                                 <tr key={index}>
-                                    <td><span>{product._id}</span></td>
-                                    <td><span>{product.createdAt}</span></td>
+                                    <td><span>{product.pid}</span></td>
+                                    <td><span>{product.productName}</span></td>
                                     <td>
                                         <div>
-                                            {product.status === 'Paid' ?
-                                                <img
-                                                    src={DoneIcon}
-                                                    alt='paid-icon'
-                                                    className='dashboard-content-icon' />
-                                            : product.status === 'Canceled' ?
-                                                <img
-                                                    src={CancelIcon}
-                                                    alt='canceled-icon'
-                                                    className='dashboard-content-icon' />
-                                            : product.status === 'Refunded' ?
-                                                <img
-                                                    src={RefundedIcon}
-                                                    alt='refunded-icon'
-                                                    className='dashboard-content-icon' />
-                                            : null}
-                                            <span>{product.status}</span>
+                                            <span>{product.discount}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div>
                                           
-                                            <span>{product.name}</span>
+                                            <span>{product.quantity}</span>
                                         </div>
                                     </td>
-                                    <div class = "imgTd">
-                                        <td><span><img src={product.product} style={{ width: '50%', height: '20%' }} /></span></td>
-                                    </div>
                                     
                                     <td><span>RS{product.price}</span></td>
                                     <td>
                                         <span>
-            <button onClick={() => handleUpdate(product.id)}>Update</button> {/* Add update button */}
+            <button onClick={() => handleUpdate(product.pid)}>Display/Update</button> {/* Add update button */}
                                 </span>
           </td>
                                 </tr>

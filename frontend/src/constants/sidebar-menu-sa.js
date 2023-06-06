@@ -22,12 +22,7 @@ const sidebar_menu = [
         path: '/sapi/registerVendor',
         title: 'Register Vendor',
     },
-    {
-        id: 4,
-        icon: ShippingIcon,
-        path: '/sapi/ShowAllVendor',
-        title: 'All Vendors',
-    }, 
+   
 ]
 
 export default sidebar_menu;
