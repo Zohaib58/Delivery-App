@@ -12,12 +12,10 @@ export const Category = () => {
         e.preventDefault();
 
         const data = {
-            name: name,
+            name,
         };
-
+        
         const response = addData('sapi/categories/addCategory', data)
-        console.log("hello")
-        //console.log(data)
         console.log(response)
     }
 
@@ -25,18 +23,18 @@ export const Category = () => {
         <div className='dashboard-container'>
             <SideBar menu={sidebar_menu} />
             <div className='dashboard-body'>
-
+                
                 <div className='dashboard-content'>
 
-                    <DashboardHeader
-                        btnText="New Category" />
+                <DashboardHeader
+                    btnText="New Order" />
 
-                    <div className='dashboard-content-container'>
-                        <div className='dashboard-content-header'>
-                            <h2>Category</h2>
-                        </div>
+                <div className='dashboard-content-container'>
+                    <div className='dashboard-content-header'>
+                        <h2>Orders List</h2>
+                    </div>
 
-
+                    
                         <div className="auth-form-container">
                             <h2>Add Category</h2>
                             <form className="register-form" onSubmit={handleSubmit}>
@@ -44,11 +42,15 @@ export const Category = () => {
                                 <input value={name} onChange={(e) => setName(e.target.value)} name="name" id="name" placeholder="" />
                                 <button type="submit">Add Category</button>
                             </form>
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
     )
 }
 

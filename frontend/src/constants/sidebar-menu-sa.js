@@ -28,6 +28,7 @@ const sidebar_menu = [
         path: '/sapi/ShowAllVendor',
         title: 'All Vendors',
     }, 
+   
 ]
 
 export default sidebar_menu;

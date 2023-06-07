@@ -3,56 +3,63 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70vh;
-  width: 600px;
+  height: 60vh;
+  width: 500px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.inputFields {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.column-left,
-.column-right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-
 button {
   display: block;
 }
 
-  
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.inputFields {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.column-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 50%;
+  margin-right: 10px;
+}
+
+.column-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 50%;
+  margin-left: 10px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
 .row-label {
-  text-align: left;
-  color: #444;
-  padding-left: 5vh;
+  align-self: flex-start;
 }
 
 .row-input {
-  width: 250px;
-  margin: 0.5rem 0;
-  border: none;
-  border-radius: 10px;
+  width: 100%;
 }
 
-span{
-  font-size: 12px;
+.LinkButton {
+  margin-top: 20px;
 }

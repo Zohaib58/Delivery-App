@@ -5,16 +5,9 @@ import './App.css'
 
 
 function App () {
-  /*
-  <SuperAdminRoutes/>
-          <VendorRoutes/>
-
-  */
   return(
     <Router>
-          <AppRoutes/>
-          
-              
+      <AppRoutes/>     
     </Router>
   )
 }

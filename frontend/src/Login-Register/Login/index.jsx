@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ActionButton, LinkButton} from '../../components/Buttons/mui-Buttons';
 import './styles.css'
-import {LoginFunc} from '../userApi'
+import {LoginFunc} from '../../data/userApi'
 
 export const Login = (props) => {
     const [email, setEmail] = useState('');

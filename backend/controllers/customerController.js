@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const Customer = require('../models/customerModel')
+const Status = require('../enum/statusEnum')
 
 
 const createCustomer = asyncHandler(async (req, res) => {
@@ -36,7 +37,7 @@ const createCustomer = asyncHandler(async (req, res) => {
 })
 
 const getCustomers = asyncHandler(async (req, res) => {
-    const customers = await Customer.find({ _id: req.user._id })
+    const customers = await Customer.findById(req.user._id)
     res.status(200).json(customers)
 })
 
@@ -75,7 +76,6 @@ const getAllCustomers = asyncHandler(async (req, res) => {
     address: req.body.address || customer.address,
   };
 
-  console.log(updatedFields);
   // Update the customer using the create command
   
   let updatedCustomer;
@@ -90,20 +90,16 @@ const getAllCustomers = asyncHandler(async (req, res) => {
 });
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-    const customer = await Customer.findById(req.body.id)
+    const customer = await Customer.findById(req.user.id)
 
     if (!customer) {
         res.status(404)
         throw new Error('Customer not found')
     }
-
-    if (customer._id !== req.user._id) {
-        res.status(401)
-        throw new Error('User not authorized')
-    }
-
-    await customer.remove()
-    res.status(200).json({ id: req.params.id })
+    const activeStatus = await Status.findOne({statusDescription: "Inactive"})
+    customer.status= activeStatus.statusNum;
+    await customer.save()
+    res.status(200).json({ id: req.user.id })
 })
 
 module.exports = {

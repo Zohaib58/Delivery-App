@@ -13,6 +13,7 @@
 
 .linkButton{
   padding-top: 1rem;
+  border: none;
   background: none;
   color: whitesmoke;
   text-decoration: underline;
