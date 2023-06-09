@@ -5,11 +5,17 @@ import sidebar_menu from '../../../../constants/sidebar-menu';
 //import account from '../../data/accounts.js';
 import '../../../styles.css';
 import addData from '../../../../components/AddData/addData';
+import {UploadImage, GetImageURL} from '../../../../components/ImageUpload';
+
 function CreateProduct() {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState('');
     const [category, setCategory] = useState('');
+    const [discount, setDiscount] = useState(0);
+    const [quantity, setQuantity] = useState(0);
+    const [price, setPrice] = useState(0);
+    const [size , setSize] = useState(0);
   
     const handleProductNameChange = (event) => {
       setProductName(event.target.value);
@@ -18,36 +24,50 @@ function CreateProduct() {
     const handleDescriptionChange = (event) => {
       setDescription(event.target.value);
     };
-  
-    const handleImageChange = (event) => {
-      setImage(event.target.value);
+
+    const handleImageUpload = (url) => {
+      setImage(url);
     };
   
     const handleCategoryChange = (event) => {
       setCategory(event.target.value);
     };
+
+    const handleQuantityChange = (event) => {
+      setQuantity(parseInt(event.target.value));
+    };
+
+    const handlePriceChange = (event) => {
+      setPrice(parseInt(event.target.value));
+    };
+
+    const handleDiscountChange = (event) => {
+      setDiscount(parseInt(event.target.value));
+    };
   
     const handleSubmit = (event) => {
       event.preventDefault();
-      // Handle the form submission, e.g., send data to the server
-      // You can access the entered data using the state variables (productName, description, image, category)
-      // Perform your logic or API calls here
-      console.log('Submitted Data:', productName, description, image, category);
-      // Reset the form fields
-      console.log(localStorage.getItem('userId'))
-      let data = {
-        vendorId: localStorage.getItem('userId'), 
+      let data = { 
         status: 0,
-        productName,
-        description,
-        image,
-        category
+        name: productName,
+        description: description,
+        image: image,
+        category: category,
+        discount: discount,
+        quantity: quantity,
+        price: price,
+        size: size
+
       }
-      addData('vapi/inventory/addProduct', data);
+      console.log(addData('vapi/inventory/addProduct', data));
       setProductName('');
       setDescription('');
       setImage('');
       setCategory('');
+      setPrice('');
+      setDiscount('');
+      setQuantity('');
+      setSize('');
     };
   
  
@@ -63,32 +83,63 @@ function CreateProduct() {
 
       <div className='dashboard-content-container'>
         <div className='dashboard-content-header'>
-          <h2> Create Product</h2>
+          <h2>Create Product</h2>
         </div>
 
+        <div>
+          <label>Image:</label>
+          <UploadImage onImageUpload={handleImageUpload}/>
+        </div>
         <form onSubmit={handleSubmit}>
-              <div>
-                <label>Product Name:</label>
-                <input type="text" value={productName} onChange={handleProductNameChange} />
-              </div>
+          <div>
+            <label>Product Name:</label>
+            <input type="text" value={productName} onChange={handleProductNameChange} />
+          </div>
 
-              <div>
-                <label>Description:</label>
-                <input type="text" value={description} onChange={handleDescriptionChange} />
-              </div>
+          <div>
+            <label>Description:</label>
+            <input type="text" value={description} onChange={handleDescriptionChange} />
+          </div>
+          <div>
+            <label>Category:</label>
+            <input type="text" value={category} onChange={handleCategoryChange} />
+          </div>
 
-              <div>
-                <label>Image:</label>
-                <input type="url" value={image} onChange={handleImageChange} />
-              </div>
+          <div>
+            <label>Discount:</label>
+            <input type="number" value={discount} onChange={(e) => setDiscount(parseInt(e.target.value))} />
+          </div>
 
-              <div>
-                <label>Category:</label>
-                <input type="number" value={category} onChange={handleCategoryChange} />
-              </div>
+          <div>
+            <label>Quantity:</label>
+            <input type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value))} />
+          </div>
 
-              <button type="submit">Submit</button>
-            </form>
+          <div>
+            <label>Price:</label>
+            <input type="number" value={price} onChange={(e) => setPrice(parseInt(e.target.value))} />
+          </div>
+
+          <div className="row1">
+                                <label>Size:</label>
+                                <div className="radio-group">
+                                    <div className="radio">
+                                        <input type="radio" id="smallsize" name="sizeType" value="Small" checked={size === "Small"} onChange={(e) => setSize("Small")} />
+                                        <label htmlFor="cod">Small</label>
+                                    </div>
+                                    <div className="radio">
+                                        <input type="radio" id="medsize" name="sizeType" value="Medium" checked={size === "Medium"} onChange={(e) => setSize("Medium")} />
+                                        <label htmlFor="medsize">Medium</label>
+                                    </div>
+                                    <div className="radio">
+                                        <input type="radio" id="largesize" name="sizeType" value="Large" checked={size === "Large"} onChange={(e) => setSize("Large")} />
+                                        <label htmlFor="largesize">Large</label>
+                                    </div>
+                                </div>
+                            </div>
+
+          <button type="submit">Submit</button>
+        </form>
       </div>
     </div>
 

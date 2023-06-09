@@ -1,6 +1,7 @@
 const Category = require('../models/categoryModel')
 const superAdmin = require('../models/adminModel')
 const User = require('../models/userModel')
+const Customer = require('../models/customerModel')
 const addCategory = async (req, res) => {
     const superAdminID = req.user._id;
   

@@ -5,12 +5,14 @@ import sidebar_menu from '../../../../constants/sidebar-menu';
 import '../../../styles.css';
 import FetchDataComponent from '../../../../components/ReadData/fetchData';
 import UpdateDataComponent from '../../../../components/UpdateData/updateData';
+import {UploadImage, GetImageURL} from '../../../../components/ImageUpload';
 
 function UpdateProduct() {
   const [data, setData] = useState(null);
   const [dataInventory, setDataInventory] = useState(null); // [1]
   const [updatedData, setUpdatedData] = useState(null);
   const [updatedDataInventory, setUpdatedDataInventory] = useState(null);
+  const [imageURL, setImageURL] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +26,7 @@ function UpdateProduct() {
         const matchingProduct = resultInventory.find((product) => product.pid === productId);
         setDataInventory(matchingProduct);
         setUpdatedDataInventory(matchingProduct);
-
+        setImageURL(result[0].image)
 
         //console.log(matchingProduct);
       } catch (error) {
@@ -34,6 +36,10 @@ function UpdateProduct() {
 
     fetchData();
   }, []);
+
+  const handleImageUpload = (url) => {
+    setImageURL(url);
+  };
 
   const handleChange = (event, field) => {
     if (field in updatedData) {
@@ -53,18 +59,17 @@ function UpdateProduct() {
     // Perform the necessary update actions using the updatedData state
     const concatenatedData = {
         category: updatedData.category,
-        createdAt: data[0].createdAt,
         description: updatedData.description,
-        image: updatedData.image,
+        image: imageURL,
         name: updatedData.name,
         status: data[0].status,
-        updatedAt: data[0].updatedAt,
         vendor: data[0].vendor,
-        _id: data[0]._id,
+        productId: data[0]._id,
         discount: updatedDataInventory.discount,
         quantity: updatedDataInventory.quantity,
         price: updatedDataInventory.price,
       };
+
     console.log(concatenatedData); // console
     // Call an API, update the database, or perform any other update logic
     UpdateDataComponent('vapi/inventory/product/editProduct', concatenatedData );
@@ -86,18 +91,9 @@ function UpdateProduct() {
                 <div>
                   <label>Category:</label>
                   <input
-                    type="number"
+                    type="text"
                     value={updatedData.category}
                     onChange={(e) => handleChange(e, 'category')}
-                  />
-                </div>
-
-                <div>
-                  <label>Created At:</label>
-                  <input
-                    type="text"
-                    value={data[0].createdAt}
-                    onChange={(e) => handleChange(e, 'createdAt')}
                   />
                 </div>
 
@@ -112,12 +108,8 @@ function UpdateProduct() {
 
                 <div>
                   <label>Image:</label>
-                  <img src={updatedData.image} alt="Product Image" />
-                  <input
-                    type="text"
-                    value={updatedData.image}
-                    onChange={(e) => handleChange(e, 'image')}
-                  />
+                  <img src={imageURL} alt="Product Image" />
+                  <UploadImage onImageUpload={handleImageUpload}/>
                 </div>
 
                 <div>
@@ -139,15 +131,6 @@ function UpdateProduct() {
                 </div>
 
                 <div>
-                  <label>Updated At:</label>
-                  <input
-                    type="text"
-                    value={data[0].updatedAt}
-                    onChange={(e) => handleChange(e, 'updatedAt')}
-                  />
-                </div>
-
-                <div>
                   <label>Vendor:</label>
                   <input
                     type="text"
@@ -157,13 +140,14 @@ function UpdateProduct() {
                 </div>
 
                 <div>
-                  <label>ID:</label>
+                  <label>Size:</label>
                   <input
                     type="text"
-                    value={data[0]._id}
-                    onChange={(e) => handleChange(e, '_id')}
+                    value={data[0].size}
+                    onChange={(e) => handleChange(e, 'size')}
                   />
                 </div>
+
 
                 {dataInventory && (
                   <>

@@ -9,19 +9,18 @@ const UserRegister = async({email, password})=> {
     const response = await AxiosBase.post('api/users/', {
         email: email,
         password: password, 
-        role: 1,
+        role: 0,
     });
-
     return response;
 }
 
-const CustomerPost = async({customerId, name, phoneNo, status, address}) => {
+const CustomerPost = async({customerId, name, phoneNo, address}) => {
     const token = localStorage.getItem('token');
     await AxiosBase.post('api/customer/',{
         customerId: customerId,
         name: name, 
         phoneNo: phoneNo,   
-        status: status, 
+        status: 0, 
         address: address, 
         favourites: [],
     },{
@@ -31,4 +30,16 @@ const CustomerPost = async({customerId, name, phoneNo, status, address}) => {
     })
 }
 
-export {LoginFunc, UserRegister, CustomerPost}
+const LogoutFunc = async() => {
+    const token = localStorage.getItem('token');
+    const res = await AxiosBase.post('/api/users/logout',{}, {
+        headers: {
+            'authorization': `Bearer ${token}`
+        }
+    })
+
+    return res;
+
+}
+
+export {LoginFunc, UserRegister, CustomerPost, LogoutFunc}

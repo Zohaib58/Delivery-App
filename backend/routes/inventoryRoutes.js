@@ -18,10 +18,4 @@ router.get('/:productId',protect, viewProduct)
 //router.get('/getProducts',protect, getVendorProducts)
 router.put('/product/editProduct', protect, updateProduct)
 
-/*router.get('/', viewInventory)
-router.post('/addProduct', addProduct)
-router.delete('/deleteProduct', deleteProduct)
-router.get('/product', viewProduct)
-router.patch('/product/editProduct', updateProduct)*/
-
 module.exports = router

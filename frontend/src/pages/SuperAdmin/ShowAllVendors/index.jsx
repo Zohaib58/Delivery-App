@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DashboardHeader from '../../../components/DashboardHeader';
 //import RootFile from '../../rootFile';
 import SideBar from '../../../components/Sidebar';
-import sidebar_menu from '../../../constants/sidebar-menu'
+import sidebar_menu from '../../../constants/sidebar-menu-sa'
 import { calculateRange, sliceData } from '../../../utils/table-pagination';
 
 import '../../styles.css';
@@ -72,11 +72,11 @@ function AllVendors() {
                 <div className='dashboard-content'>
 
                     <DashboardHeader
-                        btnText="New Order" />
+                        btnText="New Vendor" />
 
                     <div className='dashboard-content-container'>
                         <div className='dashboard-content-header'>
-                            <h2>Orders List</h2>
+                            <h2>Vendors</h2>
                             <div className='dashboard-content-search'>
                                 <input
                                     type='text'

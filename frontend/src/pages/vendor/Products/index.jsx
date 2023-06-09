@@ -97,7 +97,7 @@ function ProductsDisplay () {
                         <th>DISCOUNT</th>
                         <th>QUANTITY</th>
                         <th>PRICE</th>
-                        <th>ACTIONS</th> {/* Add Actions column */}
+                        <th>ACTIONS</th> 
                     </thead>
 
                     { 

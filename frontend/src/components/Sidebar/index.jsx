@@ -6,6 +6,7 @@ import SideBarItem from './sidebar-item';
 import './styles.css';
 import logo from '../../assets/images/white-logo.png';
 import LogoutIcon from '../../assets/icons/logout.svg';
+import {LogoutFunc} from '../../data/userApi'
 
 function SideBar ({ menu }) {
     const location = useLocation();
@@ -22,6 +23,13 @@ function SideBar ({ menu }) {
 
     const __navigate = (id) => {
         setActive(id);
+    }
+
+    const handleLogout = async() => {
+        const res = await LogoutFunc();
+        localStorage.removeItem('userId');
+        localStorage.removeItem('token');
+        window.location.assign('/')
     }
 
     return(
@@ -44,13 +52,13 @@ function SideBar ({ menu }) {
                         ))}
                     </div>
 
-                    <div className='sidebar-footer'>
+                    <button className='sidebar-footer' onClick={handleLogout}>
                         <span className='sidebar-item-label'>Logout</span>
                         <img 
                             src={LogoutIcon}
                             alt='icon-logout'
                             className='sidebar-item-icon' />
-                    </div>
+                    </button>
                 </div>
             </div>
         </nav>

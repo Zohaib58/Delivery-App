@@ -1,5 +1,10 @@
 import React,{ useState } from 'react';
 import axios from 'axios';
+import SideBar from '../../../components/Sidebar';
+import sidebar_menu from '../../../constants/sidebar-menu-sa';
+import DashboardHeader from '../../../components/DashboardHeader';
+import '../../styles.css';
+
 
 export const Register = (props) => {
     const [email, setEmail] = useState('');
@@ -28,8 +33,21 @@ export const Register = (props) => {
     }
 
     return (
+        <div className='dashboard-container'>
+            <SideBar menu={sidebar_menu} />
+            <div className='dashboard-body'>
+
+                <div className='dashboard-content'>
+
+                    <DashboardHeader
+                        btnText="New Vendor" />
+
+                    <div className='dashboard-content-container'>
+                        <div className='dashboard-content-header'>
+                            <h2>Vendor</h2>
+                        </div>
     <div className="auth-form-container">
-        <h2>Register</h2>
+        <h2>Register Vendor</h2>
     <form className="register-form" onSubmit= {handleSubmit}>
     <label htmlFor="name">Full name</label>
 <input value={name} onChange={(e) => setName(e.target.value)} name="name" id="name" placeholder="full Name"/>
@@ -39,7 +57,11 @@ export const Register = (props) => {
         <input value={pass} onChange={(e) => setPass(e.target.value)}type="password" placeholder="****" id="password" name="password" />
         <button type="submit">Login</button>
     </form>
-        <button className= "link-btn" onClick={() => props.onFormSwitch('login')}>Already have an account? Login here! </button>
+        {/* <button className= "link-btn" onClick={() => props.onFormSwitch('login')}>Already have an account? Login here! </button>*/}
+    </div>
+    </div>
+    </div>
+    </div>
     </div>
     )
 }

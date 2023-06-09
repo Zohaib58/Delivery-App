@@ -28,6 +28,7 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/vapi/inventory', require('./routes/inventoryRoutes'))
 app.use('/vapi/orders', require('./routes/vendorOrderRoutes'))
+app.use('/sapi/getAllVendor', require('./routes/getAllVendors'))
 
 
 app.use('/api/products', require('./routes/productRoutes'))

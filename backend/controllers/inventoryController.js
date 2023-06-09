@@ -4,6 +4,7 @@ const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const Vendor = require('../models/vendorModel')
 const ID = require('../id/id')
+const Size = require('../enum/sizeEnum')
 
 //vendor views their product stock
 const getVendorProducts = async(req, res) => {
@@ -42,11 +43,12 @@ const viewInventory = async(req, res) => {
             match: { status: 0 }
         });
 
+
         const inventoryData = inventoryView.map(inventoryItem => {
-        const { productId, discount, quantity, price } = inventoryItem;
-        const productName = productId.name;
-        const pid = productId._id;
-        return { pid, productName, discount, quantity, price };
+            const { productId, discount, quantity, price } = inventoryItem;
+            const productName = productId.name;
+            const pid = productId._id;
+            return { pid, productName, discount, quantity, price };
         });
 
         res.status(200).json(inventoryData)
@@ -60,51 +62,32 @@ const addProduct = async(req, res) => {
         const vendor = req.user.id
 
         const categoryCheck = await Category.findOne({name: req.body.category})
-        
-        const id = async(collection) => {
-            try {
-              const doc = await collection.findOne({vendor}).sort({ createdAt: -1 })
-              
-              if (doc === null){
-                return collection.modelName[0].toUpperCase() + '1';
-              }
-              else{
-                const oldId = doc._id;
-                const num = parseInt(oldId.slice(1)) + 1;
-                return oldId[0] + num;
-              }  
-            } catch (err) {
-              console.log(err)
-              throw new Error('Unable to generate ID')
-            }
-          }
+        const size = await Size.findOne({sizeDescription: req.body.size})
 
         if(categoryCheck){
             
             const newProduct = new Product({
-                _id: vendor + await id(Product),
+                _id: await ID.id(Product),
                 name : req.body.name,
                 vendor: vendor,
                 description : req.body.description,
                 image : req.body.image,
-                category: categoryCheck.catNum
+                category: categoryCheck.catNum,
+                status: req.body.status,
+                size: size.sizeNum,
             })
-    
             try{
                 const svProduct = await newProduct.save();
+                
                 const stock = new Inventory({
-                    productId : svProduct._id,
+                    productId : newProduct._id,
                     vendorId : vendor,
                     discount : req.body.discount,
                     quantity : req.body.quantity,
                     price : req.body.price,
                 })
-                try{
-                    const savedStock = await stock.save();
-                    res.json("Product added successfully");
-                } catch(err) {
-                    res.json(err.message)
-                }
+                const savedStock = await stock.save();
+                res.json("Product added successfully");
             } catch(err) {
                 res.json(err.message)
             }
@@ -127,7 +110,7 @@ const deleteProduct = async(req, res) => {
 
         if(Stock.vendorId === vendor) {
             try{
-                const removeProduct = await Product.findOne({_id: removeStock.productId})
+                const removeProduct = await Product.findOne({_id: Stock.productId})
                 removeProduct.status = 1;
                 const saveChanges = await removeProduct.save();
                 res.json("Product Deleted!")
@@ -149,8 +132,21 @@ const deleteProduct = async(req, res) => {
 const viewProduct = async(req, res) => {
     try {
         const product = await Product.find({_id : req.params.productId});
+        const category = await Category.findOne({catNum: product[0].category})
+        const size = await Size.findOne({sizenum: product[0].size})
 
-        res.status(200).json(product)
+        const returnProduct = [{
+            _id: product[0]._id,
+            name: product[0].name,
+            vendor: product[0].vendor,
+            description: product[0].description,
+            image: product[0].image,
+            status: product[0].status,
+            category: category.name,
+            size: size.sizeDescription,
+        }]
+
+        res.status(200).json(returnProduct)
     } catch (err) {
         res.json(err.message)
     }
@@ -163,7 +159,6 @@ const updateProduct = async(req, res) => {
 
         const product = await Product.findById(req.body.productId)
         const productStock = await Inventory.findOne({productId: product._id})
-        console.log(productStock.vendorId)
 
         const category = await Category.findOne({name: req.body.category})
 
@@ -172,17 +167,15 @@ const updateProduct = async(req, res) => {
             product.description = req.body.description;
             product.image = req.body.image;
             product.category = category.catNum
-            const savedProduct = await product.save();
 
             
-            if(productStock.length>0){
-                const stock = productStock[0];
-                stock.discount = req.body.discount;
-                stock.price = req.body.price;
-                stock.quantity = req.body.quantity;
+            const savedProduct = await product.save();
 
-                const savedStock = await stock.save();
-            }
+            productStock.discount = req.body.discount;
+            productStock.price = req.body.price;
+            productStock.quantity = req.body.quantity;
+
+            const savedStock = await productStock.save();
             res.json("Product updated Successfully!");
         }
         else {

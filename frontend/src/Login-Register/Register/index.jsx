@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { ActionButton, LinkButton } from '../../components/Buttons/mui-Buttons';
 import './styles.css'
-import {CustomerPost, UserRegister} from '../userApi'
+import {CustomerPost, UserRegister} from '../../data/userApi'
 
 export const Register = (props) => {
     const [email, setEmail] = useState('');

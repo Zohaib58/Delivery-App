@@ -11,14 +11,9 @@ export const LinkButton= ({buttonName, props, text})=>{
     );
 }
 
-
-/*import {Button} from "@mui/material" 
-
-export const TestMUIButton = ({Name, onClick}) => {
-
-    return (
-        <div>
-            <Button onClick={onClick}>Name</Button>
-        </div>
+export const Descrip = ({buttonName, props, text}) => {
+    console.log(typeof text)
+    return(
+        <button className="linkButton" onClick={()=> props.onClick(text)}>{buttonName}</button>
     )
-}*/
+}
