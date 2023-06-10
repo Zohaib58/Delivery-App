@@ -13,6 +13,7 @@ const GetAllProducts = async ({category, keyword}) => {
 
 const GetAProduct = async ({productID}) => {
   const token = localStorage.getItem('token');
+  console.log(productID);
   const res = await AxiosBase.get(`/api/products/product/${productID}`, {
       headers:{
           authorization: `Bearer ${token}`

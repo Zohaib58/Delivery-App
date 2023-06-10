@@ -6,7 +6,7 @@ const sizeEnumSchema = mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      enum: [0, 1, 3], // Restricts the values to only 0 or 1
+      enum: [0, 1, 2], // Restricts the values to only 0 or 1
       default: 0
     },
     sizeDescription: {

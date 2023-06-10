@@ -201,11 +201,29 @@ const browseProducts = async(req, res) => {
 const getProduct = async(req, res) => {
     try{
         const product = await Product.findById(req.params.id)
+
         const vendor = await Vendor.findById(product.vendor)
         product.vendor = vendor.companyName
-        const size = await Size.findOne({sizenum: pruoduct.size})
-        product.size = size.sizeDescription
-        res.status(200).json(product)
+        const size = await Size.findOne({sizenum: product.size})
+       //console.log(size)
+       product.sizeDes = size.sizeDescription
+        //console.log(product.sizeDes)
+        //console.log(size.sizeDescription)
+       // console.log(product)
+       // console.log(size.sizeDescription)
+       const returnProduct = {
+        _id: product._id,
+        namd: product.name,
+        vendor: product.vendor,
+        description: product.description,
+        image: product.image,
+        status: product.status,
+        category: product.category,
+        createdAt: product.createdAt,
+        updatedAt: product.updateAt,
+        size: size.sizeDescription
+        }
+        res.status(200).json(returnProduct)
     }catch(err){
         res.json(err.message)
     }

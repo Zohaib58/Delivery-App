@@ -5,6 +5,10 @@ import './SingleProduct.css';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
+
+// Rest of your code...
+
+
 const SingleProduct = ({ id, Price}) => {
   const { addToCart, cartItems } = useContext(CartContext);
   const [product, setProduct] = useState(null);
@@ -20,6 +24,7 @@ const SingleProduct = ({ id, Price}) => {
       try {
         const res = await GetAProduct({ productID: id });
         const data = res.data;
+        console.log(data);
         setProduct(data);
       } catch (error) {
         console.log('Error occurred while fetching product data:', error);
@@ -80,9 +85,11 @@ const SingleProduct = ({ id, Price}) => {
             )}
           </div>
           <div className='product-details'>
-            <h1>{product ? product.name : 'Loading product name...'}</h1>
+          <h1>{product ? product.name : 'Loading product name...'}</h1> 
             <p>{product ? product.vendor : 'Loading vendor name...'}</p>
             <p>Price: PKR {product ? Price : 'Loading product price...'}</p>
+            <p>Size: {product ? product.size : 'Loading size...'}</p>
+
             <p>
               Description:{' '}
               {product ? (
